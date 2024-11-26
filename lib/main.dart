@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'screens/auth_screen.dart';
-import 'screens/chat_screen.dart';
-import 'screens/profile_screen.dart';
-import 'provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zovcord/core/cubit/auth_cubit.dart';
+import 'package:zovcord/core/router/app_router.dart';
+import 'core/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -33,19 +33,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) {
-        return MaterialApp(
-          title: 'Zovcord',
-          theme: themeProvider.currentTheme,
-          initialRoute: '/',
-          routes: {
-            '/': (context) => AuthScreen(),
-            '/chat': (context) => const ChatScreen(),
-            '/profile': (context) => ProfileScreen(),
-          },
-        );
-      },
+    // Получаем ThemeProvider из контекста
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    return BlocProvider(
+      create: (_) => AuthCubit(),
+      child: MaterialApp.router(
+        routerConfig: AppRouter.router,
+        title: 'Zovcord',
+        theme: themeProvider.currentTheme, // Используем текущую тему
+      ),
     );
   }
 }

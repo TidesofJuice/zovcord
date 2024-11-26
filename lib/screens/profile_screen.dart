@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import '../provider.dart';
+import '../core/theme_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final User? user = FirebaseAuth.instance.currentUser;
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final User? user = FirebaseAuth.instance.currentUser;
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
@@ -19,9 +20,8 @@ class ProfileScreen extends StatelessWidget {
             Text('Email: ${user?.email ?? "Не вошел"}'),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.pushReplacementNamed(context, '/');
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
               },
               child: const Text('Выйти'),
             ),
