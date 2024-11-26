@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -11,7 +12,7 @@ class ChatScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
-            onPressed: () => Navigator.pushNamed(context, '/profile'),
+            onPressed: () => GoRouter.of(context).go('/profile'),
           ),
         ],
       ),
