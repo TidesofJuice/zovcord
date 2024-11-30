@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-<<<<<<< Updated upstream
-import '../provider.dart';
-=======
 import '../core/cubit/auth_cubit.dart';
 import '../core/theme_provider.dart';
->>>>>>> Stashed changes
 
 class ProfileScreen extends StatelessWidget {
-  final User? user = FirebaseAuth.instance.currentUser;
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +17,9 @@ class ProfileScreen extends StatelessWidget {
         title: const Text('Профиль'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.chat), 
+            icon: const Icon(Icons.chat), // Chats icon
             onPressed: () {
-              GoRouter.of(context).go('/chat'); 
+              GoRouter.of(context).go('/chat'); // Navigate back to chats
             },
           ),
         ],
@@ -40,13 +36,8 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-<<<<<<< Updated upstream
-                FirebaseAuth.instance.signOut();
-                Navigator.pushReplacementNamed(context, '/');
-=======
                 context.read<AuthCubit>().logout();
-                GoRouter.of(context).go('/login'); 
->>>>>>> Stashed changes
+                GoRouter.of(context).go('/login'); // Redirect to login after logout
               },
               child: const Text('Выйти'),
             ),

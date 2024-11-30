@@ -3,13 +3,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
   ThemeData _currentTheme = ThemeData.light();
-
   ThemeData get currentTheme => _currentTheme;
-
   ThemeProvider() {
     _loadTheme();
   }
-
   void toggleTheme() async {
     final prefs = await SharedPreferences.getInstance();
     if (_currentTheme == ThemeData.light()) {

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream
-=======
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
->>>>>>> Stashed changes
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -16,13 +13,9 @@ class ChatScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
-<<<<<<< Updated upstream
-            onPressed: () => Navigator.pushNamed(context, '/profile'),
-=======
             onPressed: () {
               GoRouter.of(context).go('/profile');
             },
->>>>>>> Stashed changes
           ),
         ],
       ),
