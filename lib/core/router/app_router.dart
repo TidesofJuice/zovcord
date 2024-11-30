@@ -13,23 +13,19 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/login',
     redirect: (BuildContext context, GoRouterState state) {
-      // Access the current authentication state
       final authCubit = context.read<AuthCubit>();
       final isAuthenticated = authCubit.state.isAuthenticated;
       final isLoggingIn = state.uri.toString() == '/login';
       final isRegistering = state.uri.toString() == '/register';
 
-      // If not authenticated and not on login/register, redirect to login
       if (!isAuthenticated && !isLoggingIn && !isRegistering) {
         return '/login';
       }
 
-      // If authenticated and on login/register, redirect to chat
       if (isAuthenticated && (isLoggingIn || isRegistering)) {
         return '/chat';
       }
 
-      // Otherwise, allow navigation
       return null;
     },
     routes: [

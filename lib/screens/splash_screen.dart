@@ -22,7 +22,7 @@ class SplashScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Welcome to My App',
+              'Загрузка',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],

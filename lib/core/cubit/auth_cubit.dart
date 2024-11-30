@@ -25,7 +25,6 @@ class AuthCubit extends Cubit<AuthState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   AuthCubit() : super(AuthState(user: FirebaseAuth.instance.currentUser)) {
-    // Listen to authentication state changes
     _firebaseAuth.authStateChanges().listen((User? user) {
       emit(state.copyWith(user: user));
     });
@@ -42,9 +41,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(state.copyWith(user: userCredential.user, isLoading: false));
     } catch (e) {
       emit(state.copyWith(
-        isLoading: false, 
-        errorMessage: _parseFirebaseError(e)
-      ));
+          isLoading: false, errorMessage: _parseFirebaseError(e)));
     }
   }
 
@@ -57,7 +54,6 @@ class AuthCubit extends Cubit<AuthState> {
         password: password,
       );
 
-      // Save user email to Firestore
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
         'email': email,
       });
@@ -65,9 +61,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(state.copyWith(user: userCredential.user, isLoading: false));
     } catch (e) {
       emit(state.copyWith(
-        isLoading: false, 
-        errorMessage: _parseFirebaseError(e)
-      ));
+          isLoading: false, errorMessage: _parseFirebaseError(e)));
     }
   }
 
@@ -80,7 +74,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // Helper method to parse Firebase error messages
   String _parseFirebaseError(Object error) {
     if (error is FirebaseAuthException) {
       switch (error.code) {

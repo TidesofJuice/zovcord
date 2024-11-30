@@ -17,9 +17,9 @@ class ProfileScreen extends StatelessWidget {
         title: const Text('Профиль'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.chat), // Chats icon
+            icon: const Icon(Icons.chat),
             onPressed: () {
-              GoRouter.of(context).go('/chat'); // Navigate back to chats
+              GoRouter.of(context).go('/chat');
             },
           ),
         ],
@@ -37,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 context.read<AuthCubit>().logout();
-                GoRouter.of(context).go('/login'); // Redirect to login after logout
+                GoRouter.of(context).go('/login');
               },
               child: const Text('Выйти'),
             ),
