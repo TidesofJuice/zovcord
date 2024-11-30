@@ -21,11 +21,21 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state.user != null) {
-            GoRouter.of(context).go('/chat');
+            GoRouter.of(context).go('/list');
           }
           if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage!)),
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Ошибка'),
+                content: Text(state.errorMessage!),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Закрыть'),
+                  ),
+                ],
+              ),
             );
           }
         },

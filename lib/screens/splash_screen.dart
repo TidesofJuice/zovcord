@@ -7,7 +7,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 3), () {
-      GoRouter.of(context).go('/chat');
+      GoRouter.of(context).go('/login');  // Redirect to login screen after splash
     });
 
     return Scaffold(
