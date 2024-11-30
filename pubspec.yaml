@@ -13,6 +13,9 @@ dependencies:
     sdk: flutter
   provider: ^6.1.2
   theme_provider: ^0.6.0
+  shared_preferences: ^2.3.3
+  cloud_firestore: ^5.5.0
+  bloc: ^8.1.4
 
 dev_dependencies:
   flutter_test:

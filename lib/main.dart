@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
@@ -46,6 +47,17 @@ class MyApp extends StatelessWidget {
           },
         );
       },
+=======
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    return BlocProvider(
+      create: (_) => AuthCubit(),
+      child: MaterialApp.router(
+        routerConfig: AppRouter.router,
+        title: 'Zovcord',
+        theme: themeProvider.currentTheme,
+      ),
+>>>>>>> Stashed changes
     );
   }
 }
