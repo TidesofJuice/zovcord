@@ -27,14 +27,16 @@ class ChatListScreen extends StatelessWidget {
             itemCount: users.length,
             itemBuilder: (context, index) {
               final user = users[index];
-              final userId = user.id;
-              final userName = user['name'] ?? 'Пользователь';
+              final userId = user.id; // ID документа в Firestore
+              final userEmail = user['email'] ?? 'Нет email';
 
               return ListTile(
                 leading: const Icon(Icons.person),
-                title: Text(userName),
+                title: Text(userEmail), // Показываем email
                 onTap: () {
-                  GoRouter.of(context).go('/chat/$userId');
+                  GoRouter.of(context).go(
+                    '/chat/$userId', // Передаем userId
+                  );
                 },
               );
             },

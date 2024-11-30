@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatScreen extends StatelessWidget {
   final String userId;
@@ -16,13 +16,12 @@ class ChatScreen extends StatelessWidget {
 
       FirebaseFirestore.instance
           .collection('chats')
-          .doc(userId) // Use the dynamic userId
+          .doc(userId) // Используем userId для идентификации чата
           .collection('messages')
           .add({
-        'senderId': 'user123', // Get userId from FirebaseAuth
+        'email': FirebaseAuth.instance.currentUser!.email,
         'content': _messageController.text.trim(),
         'timestamp': FieldValue.serverTimestamp(),
-        'type': 'text',
       });
 
       _messageController.clear();
@@ -30,13 +29,7 @@ class ChatScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Чат'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () => GoRouter.of(context).go('/profile'),
-          ),
-        ],
+        title: Text('Чат с $userId'),
       ),
       body: Column(
         children: [
@@ -44,7 +37,7 @@ class ChatScreen extends StatelessWidget {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('chats')
-                  .doc(userId) // Use the dynamic userId
+                  .doc(userId)
                   .collection('messages')
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
@@ -56,19 +49,20 @@ class ChatScreen extends StatelessWidget {
                 final messages = snapshot.data!.docs;
 
                 return ListView.builder(
-                  reverse: true, // Show the latest messages at the bottom
+                  reverse: true, // Последние сообщения внизу
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
                     return ListTile(
                       title: Text(message['content']),
-                      subtitle: Text('Отправлено: ${message['senderId']}'),
+                      subtitle: Text('Отправлено: ${message['email']}'),
                     );
                   },
                 );
               },
             ),
           ),
+          // Поле ввода сообщения
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
