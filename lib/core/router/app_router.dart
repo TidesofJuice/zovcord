@@ -51,10 +51,10 @@ class AppRouter {
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
-        path: '/chat/:email',
+        path: '/chat/:userId',
         builder: (context, state) {
-          final email = state.pathParameters['email']!;
-          return ChatDetailScreen(email: email);
+          final userId = state.pathParameters['userId']!;
+          return ChatScreen(userId: userId,);
         },
       ),
     ],

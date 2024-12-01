@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatelessWidget {
   final String userId;
@@ -30,6 +31,13 @@ class ChatScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Чат с $userId'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                GoRouter.of(context).go('/chat');
+              },
+              icon: const Icon(Icons.chat))
+        ],
       ),
       body: Column(
         children: [
