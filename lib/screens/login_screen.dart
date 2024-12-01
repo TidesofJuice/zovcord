@@ -17,25 +17,15 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Войти')),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state.user != null) {
-            GoRouter.of(context).go('/list');
+            GoRouter.of(context).go('/chat');
           }
           if (state.errorMessage != null) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text('Ошибка'),
-                content: Text(state.errorMessage!),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Закрыть'),
-                  ),
-                ],
-              ),
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage!)),
             );
           }
         },
@@ -43,14 +33,15 @@ class _LoginScreenState extends State<LoginScreen> {
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextField(
                   controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: const InputDecoration(labelText: 'Почта'),
                 ),
                 TextField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  decoration: const InputDecoration(labelText: 'Пароль'),
                   obscureText: true,
                 ),
                 const SizedBox(height: 20),
@@ -65,11 +56,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                   child: state.isLoading
                       ? const CircularProgressIndicator()
-                      : const Text('Login'),
+                      : const Text('Войти'),
                 ),
                 TextButton(
                   onPressed: () => GoRouter.of(context).go('/register'),
-                  child: const Text('Register'),
+                  child: const Text('Зарегистрироваться'),
                 ),
               ],
             ),

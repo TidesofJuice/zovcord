@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
-import '../core/theme_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../core/cubit/auth_cubit.dart';
+import '../core/theme_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -13,17 +15,31 @@ class ProfileScreen extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Профиль')),
+      appBar: AppBar(
+        title: const Text('Профиль'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.chat),
+            onPressed: () {
+              GoRouter.of(context).go('/chat');
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Email: ${user?.email ?? "Не вошел"}'),
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                return Text('Email: ${state.user?.email ?? "Не вошел"}');
+              },
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                GoRouter.of(context).go('/login'); // Redirect to login screen after sign out
+              onPressed: () {
+                context.read<AuthCubit>().logout();
+                GoRouter.of(context).go('/login');
               },
               child: const Text('Выйти'),
             ),

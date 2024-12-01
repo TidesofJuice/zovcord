@@ -7,7 +7,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 3), () {
-      GoRouter.of(context).go('/login');  // Redirect to login screen after splash
+      GoRouter.of(context).go('/chat');
     });
 
     return Scaffold(
@@ -22,7 +22,7 @@ class SplashScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Welcome to My App',
+              'Загрузка',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],

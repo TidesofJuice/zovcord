@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: "AIzaSyD2H3LlCIt-6vMIeAaSsdvBzfsIA5PKBpU",
@@ -19,7 +18,6 @@ void main() async {
       appId: "1:611390456402:web:5f1ce6a7ecfe2bff51158b",
     ),
   );
-
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
@@ -30,18 +28,15 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    // Получаем ThemeProvider из контекста
     final themeProvider = Provider.of<ThemeProvider>(context);
-
     return BlocProvider(
       create: (_) => AuthCubit(),
       child: MaterialApp.router(
         routerConfig: AppRouter.router,
         title: 'Zovcord',
-        theme: themeProvider.currentTheme, // Используем текущую тему
+        theme: themeProvider.currentTheme,
       ),
     );
   }

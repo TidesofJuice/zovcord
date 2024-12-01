@@ -25,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: const Text('Зарегистрироваться'),
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
@@ -47,14 +47,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Почта',
                   ),
                 ),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _passwordController,
                   decoration: const InputDecoration(
-                    labelText: 'Password',
+                    labelText: 'Пароль',
                   ),
                   obscureText: true,
                 ),
@@ -70,11 +70,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                   child: state.isLoading
                       ? const CircularProgressIndicator()
-                      : const Text('Register'),
+                      : const Text('Зарегистрироваться'),
                 ),
                 TextButton(
                   onPressed: () => GoRouter.of(context).go('/login'),
-                  child: const Text('Login'),
+                  child: const Text('Войти'),
                 ),
               ],
             ),
