@@ -10,6 +10,9 @@ class ChatListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Выберите диалог'),
+        actions: [
+          IconButton(onPressed: () {GoRouter.of(context).go('/profile');}, icon: const Icon(Icons.people))
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
