@@ -12,7 +12,9 @@ class AuthServices {
   }
 
   Future<void> signIn(String email, String password) async {
-    try {} on FirebaseAuthException catch (ex) {
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (ex) {
       throw Exception(ex.message);
     }
   }
