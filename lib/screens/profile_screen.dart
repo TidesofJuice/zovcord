@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
+import 'package:zovcord/core/theme/styles/app_text_styles.dart';
 import 'package:zovcord/core/theme/theme_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -16,37 +17,45 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Настройки"),
+        centerTitle: true,
+        backgroundColor: Colors.amber,
+        title: Text("Настройки", style: AppTextStyles.appbar1,),
       ),
-      body: Column(
-        children: [
-          if (user != null)
-            ListTile(
-              title: const Text("Почта"),
-              subtitle: Text(user.email ?? "Ошибка"),
-            ),
-          ListTile(
-            title: const Text("Темная тема"),
-            trailing: Switch(
-              value: themeProvider.currentTheme == ThemeData.dark(),
-              onChanged: (_) {
-                themeProvider.toggleTheme();
-              },
-            ),
+      body: Center(
+        child: Container(
+          width: 600, 
+          height: 700,
+          child: Column(
+            children: [
+              if (user != null)
+                ListTile(
+                  title: const Text("Почта"),
+                  subtitle: Text(user.email ?? "Ошибка"),
+                ),
+              ListTile(
+                title: const Text("Темная тема"),
+                trailing: Switch(
+                  value: themeProvider.currentTheme == ThemeData.dark(),
+                  onChanged: (_) {
+                    themeProvider.toggleTheme();
+                  },
+                ),
+              ),
+              ListTile(
+                title: const Text("Выйти"),
+                trailing: IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () async {
+                    await authService.signOut();
+                    if (context.mounted) {
+                      context.go('/login');
+                    }
+                  },
+                ),
+              ),
+            ],
           ),
-          ListTile(
-            title: const Text("Выйти"),
-            trailing: IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () async {
-                await authService.signOut();
-                if (context.mounted) {
-                  context.go('/login');
-                }
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -42,35 +42,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(hintText: "Почта"),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(hintText: "Пароль"),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                await signUp(
-                  emailController.text.trim(),
-                  passwordController.text.trim(),
-                );
-              },
-              child: const Text("Зарегистрироваться"),
-            ),
-            if (widget.callBack != null)
-              TextButton(
-                onPressed: widget.callBack,
-                child: const Text("Войти"),
+        child: Container(
+          width: 300, 
+          height: 400,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Регистрация',style: TextStyle(fontSize: 24),),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(hintText: "Почта"),
               ),
-          ],
+              const SizedBox(height: 10),
+              TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(hintText: "Пароль"),
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  await signUp(
+                    emailController.text.trim(),
+                    passwordController.text.trim(),
+                  );
+                },
+                child: const Text("Зарегистрироваться"),
+              ),
+              if (widget.callBack != null)
+                TextButton(
+                  onPressed: widget.callBack,
+                  child: const Text("Войти"),
+                ),
+            ],
+          ),
         ),
       ),
     );

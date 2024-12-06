@@ -47,30 +47,36 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Text(widget.receiverEmail),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: MessageList(
-              receiverID: widget.receiverId,
-              controller: scrollController,
-            ),
-          ),
-          Row(
+      body: Center(
+        child: Container(
+          width: 700, 
+          height: 600,
+          child: Column(
             children: [
               Expanded(
-                child: TextField(
-                  controller: controller,
-                  decoration:
-                      const InputDecoration(hintText: "Введите сообщение"),
+                child: MessageList(
+                  receiverID: widget.receiverId,
+                  controller: scrollController,
                 ),
               ),
-              IconButton(
-                onPressed: sendMessage,
-                icon: const Icon(Icons.send),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      decoration:
+                          const InputDecoration(hintText: "Введите сообщение"),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: sendMessage,
+                    icon: const Icon(Icons.send),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

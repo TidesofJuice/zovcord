@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isLoading = false;
+  final image = AssetImage('images/logo.jpg');
 
   Future<void> signIn(String email, String password) async {
     setState(() {
@@ -50,39 +51,44 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(hintText: "Почта"),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(hintText: "Пароль"),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isLoading
-                  ? null
-                  : () async {
-                      await signIn(
-                        emailController.text.trim(),
-                        passwordController.text.trim(),
-                      );
-                    },
-              child: _isLoading
-                  ? const CircularProgressIndicator()
-                  : const Text("Войти"),
-            ),
-            if (widget.callBack != null)
-              TextButton(
-                onPressed: widget.callBack,
-                child: const Text("Зарегистрироваться"),
+        child: Container(
+          width: 300,
+          height: 400,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Войти',style: TextStyle(fontSize: 24),),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(hintText: "Почта"),
               ),
-          ],
+              const SizedBox(height: 10),
+              TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(hintText: "Пароль"),
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _isLoading
+                    ? null
+                    : () async {
+                        await signIn(
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
+                        );
+                      },
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text("Войти"),
+              ),
+              if (widget.callBack != null)
+                TextButton(
+                  onPressed: widget.callBack,
+                  child: const Text("Зарегистрироваться"),
+                ),
+            ],
+          ),
         ),
       ),
     );
