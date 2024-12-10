@@ -43,12 +43,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       body: Center(
         child: Container(
-          width: 300, 
+          width: 300,
           height: 400,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Регистрация',style: TextStyle(fontSize: 24),),
+              Text(
+                'Регистрация',
+                style: TextStyle(fontSize: 24),
+              ),
               TextField(
                 controller: emailController,
                 decoration: const InputDecoration(hintText: "Почта"),

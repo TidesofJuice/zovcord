@@ -57,7 +57,10 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Войти',style: TextStyle(fontSize: 24),),
+              Text(
+                'Войти',
+                style: TextStyle(fontSize: 24),
+              ),
               TextField(
                 controller: emailController,
                 decoration: const InputDecoration(hintText: "Почта"),

@@ -43,7 +43,8 @@ class ThemeProvider with ChangeNotifier {
       if (doc.exists) {
         final data = doc.data();
         if (data != null && data.containsKey('isDarkTheme')) {
-          _currentTheme = data['isDarkTheme'] ? ThemeData.dark() : ThemeData.light();
+          _currentTheme =
+              data['isDarkTheme'] ? ThemeData.dark() : ThemeData.light();
         }
       }
     }

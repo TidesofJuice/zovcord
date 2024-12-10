@@ -19,11 +19,14 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.amber,
-        title: Text("Настройки", style: AppTextStyles.appbar1,),
+        title: Text(
+          "Настройки",
+          style: AppTextStyles.appbar1,
+        ),
       ),
       body: Center(
         child: Container(
-          width: 600, 
+          width: 600,
           height: 700,
           child: Column(
             children: [

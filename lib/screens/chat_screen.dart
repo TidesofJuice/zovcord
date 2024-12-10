@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
 import 'package:zovcord/core/services/chat_service.dart';
@@ -24,6 +25,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final controller = TextEditingController();
   final ScrollController scrollController = ScrollController();
+  bool emojiShowing = false;
 
   void scrollDown() {
     scrollController.animateTo(
@@ -41,6 +43,14 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void onEmojiSelected(Emoji emoji) {
+    controller.text += emoji.emoji;
+  }
+
+  void onBackspacePressed() {
+    controller.text = controller.text.characters.skipLast(1).toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Center(
         child: Container(
-          width: 700, 
+          width: 700,
           height: 600,
           child: Column(
             children: [
@@ -72,7 +82,27 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: sendMessage,
                     icon: const Icon(Icons.send),
                   ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        emojiShowing = !emojiShowing;
+                      });
+                    },
+                    icon: const Icon(Icons.emoji_emotions),
+                  ),
                 ],
+              ),
+              Offstage(
+                offstage: !emojiShowing,
+                child: SizedBox(
+                  height: 250,
+                  child: EmojiPicker(
+                    onEmojiSelected: (category, emoji) {
+                      onEmojiSelected(emoji);
+                    },
+                    onBackspacePressed: onBackspacePressed,
+                  ),
+                ),
               ),
             ],
           ),
@@ -121,7 +151,20 @@ class MessageList extends StatelessWidget {
       alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(data["message"]),
+        child: Column(
+          crossAxisAlignment:
+              isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Text(
+              data['senderEmail'],
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            Text(
+              data["message"],
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
       ),
     );
   }
