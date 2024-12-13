@@ -21,7 +21,8 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(
-              Icons.settings, color: Colors.white,
+              Icons.settings,
+              color: Colors.white,
               shadows: [
                 Shadow(
                     // bottomLeft
@@ -59,6 +60,8 @@ class UserList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
+        decoration: ShapeDecoration(
+            shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
         width: 1000,
         height: 700,
         child: StreamBuilder(
@@ -69,7 +72,7 @@ class UserList extends StatelessWidget {
             }
             if (!snapshot.hasData ||
                 snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: Text("Загрузка"));
+              return const Center(child: Text("ЗАГРУЗКА..."));
             }
             return ListView(
               children: snapshot.data!
@@ -98,6 +101,7 @@ class UserTile extends StatelessWidget {
   Widget build(BuildContext context) {
     if (email != _authServices.getCurrentUser()!.email) {
       return ListTile(
+        leading: const Icon(Icons.person),
         title: Text(email),
         onTap: () {
           context.go('/chat/$email/$userId');

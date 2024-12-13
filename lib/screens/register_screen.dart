@@ -41,46 +41,92 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          width: 300,
-          height: 400,
+      body: BackgroundImage(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Регистрация',
-                style: TextStyle(fontSize: 24),
+              const SizedBox(height: 200),
+              const Text(
+                'ZOVCORD',
+                style: TextStyle(fontSize: 24, color: Colors.white),
               ),
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(hintText: "Почта"),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(hintText: "Пароль"),
-                obscureText: true,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  await signUp(
-                    emailController.text.trim(),
-                    passwordController.text.trim(),
-                  );
-                },
-                child: const Text("Зарегистрироваться"),
-              ),
-              if (widget.callBack != null)
-                TextButton(
-                  onPressed: widget.callBack,
-                  child: const Text("Войти"),
+              SizedBox(
+                width: 400,
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Почта',
+                        fillColor: Color.fromARGB(255, 139, 121, 255),
+                        filled: true,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: passwordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Пароль',
+                        fillColor: Color.fromARGB(255, 139, 121, 255),
+                        filled: true,
+                      ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        textStyle:
+                            const TextStyle(color: Colors.black, fontSize: 20),
+                        minimumSize: const Size(400, 50),
+                        backgroundColor:
+                            const Color.fromARGB(255, 211, 205, 255),
+                        overlayColor: Colors.black,
+                      ),
+                      onPressed: () async {
+                        await signUp(
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
+                        );
+                      },
+                      child: const Text('Зарегистрироваться'),
+                    ),
+                    if (widget.callBack != null)
+                      TextButton(
+                        onPressed: widget.callBack,
+                        child: const Text(
+                          'Войти',
+                          style: TextStyle(fontSize: 24, color: Colors.white),
+                        ),
+                      ),
+                  ],
                 ),
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class BackgroundImage extends StatelessWidget {
+  final Widget child;
+
+  BackgroundImage({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints.expand(),
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/pic/flag.jpg"),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: child,
     );
   }
 }

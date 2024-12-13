@@ -41,9 +41,8 @@ flutter:
 
 
   assets:
-  #  - assets/
-  #  - images/logo.jpg
-  #   - images/a_dot_ham.jpeg
+    - assets/
+    - assets/pic/flag.jpg
 
   # fonts:
   #   - family: Schyler

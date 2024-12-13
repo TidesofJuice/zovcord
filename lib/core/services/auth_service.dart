@@ -27,7 +27,7 @@ class AuthServices {
     try {
       final UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+      await _firestore.collection('Users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'email': email,
         'isDarkTheme': false,

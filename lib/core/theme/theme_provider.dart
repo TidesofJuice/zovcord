@@ -20,7 +20,6 @@ class ThemeProvider with ChangeNotifier {
       _currentTheme = ThemeData.light();
     }
 
-    // Save theme preference to Firestore
     await _saveThemeToFirestore(_currentTheme == ThemeData.dark());
 
     notifyListeners();
@@ -29,7 +28,7 @@ class ThemeProvider with ChangeNotifier {
   Future<void> _saveThemeToFirestore(bool isDarkTheme) async {
     final user = _auth.currentUser;
     if (user != null) {
-      await _firestore.collection('users').doc(user.uid).set(
+      await _firestore.collection('Users').doc(user.uid).set(
         {'isDarkTheme': isDarkTheme},
         SetOptions(merge: true),
       );
@@ -39,7 +38,7 @@ class ThemeProvider with ChangeNotifier {
   Future<void> _loadTheme() async {
     final user = _auth.currentUser;
     if (user != null) {
-      final doc = await _firestore.collection('users').doc(user.uid).get();
+      final doc = await _firestore.collection('Users').doc(user.uid).get();
       if (doc.exists) {
         final data = doc.data();
         if (data != null && data.containsKey('isDarkTheme')) {
