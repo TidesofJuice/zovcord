@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
@@ -51,6 +52,12 @@ class _ChatScreenState extends State<ChatScreen> {
     controller.text = controller.text.characters.skipLast(1).toString();
   }
 
+  void _handleKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
+      sendMessage();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,28 +76,33 @@ class _ChatScreenState extends State<ChatScreen> {
                   controller: scrollController,
                 ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      decoration:
-                          const InputDecoration(hintText: "Введите сообщение"),
+              KeyboardListener(
+                focusNode: FocusNode(),
+                autofocus: false,
+                onKeyEvent: _handleKeyEvent,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: controller,
+                        decoration: const InputDecoration(
+                            hintText: "Введите сообщение"),
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: sendMessage,
-                    icon: const Icon(Icons.send),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        emojiShowing = !emojiShowing;
-                      });
-                    },
-                    icon: const Icon(Icons.emoji_emotions),
-                  ),
-                ],
+                    IconButton(
+                      onPressed: sendMessage,
+                      icon: const Icon(Icons.send),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          emojiShowing = !emojiShowing;
+                        });
+                      },
+                      icon: const Icon(Icons.emoji_emotions),
+                    ),
+                  ],
+                ),
               ),
               Offstage(
                 offstage: !emojiShowing,
