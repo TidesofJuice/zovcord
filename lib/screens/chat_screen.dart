@@ -86,7 +86,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: TextField(
                         controller: controller,
                         decoration: const InputDecoration(
-                            hintText: "Введите сообщени"),
+                            hintText: "Введите сообщение"),
                       ),
                     ),
                     IconButton(
@@ -145,7 +145,7 @@ class MessageList extends StatelessWidget {
         }
         if (!snapshot.hasData ||
             snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: Text("Загрузка"));
+          return const Center(child: Text("ЗАГРУЗКА..."));
         }
         return ListView(
           controller: controller,
