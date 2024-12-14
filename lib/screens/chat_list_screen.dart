@@ -94,15 +94,17 @@ class UserList extends StatelessWidget {
 class UserTile extends StatelessWidget {
   const UserTile({super.key, required this.email, required this.userId});
 
-  final String email;
-  final String userId;
+  final String? email;
+  final String? userId;
 
   @override
   Widget build(BuildContext context) {
-    if (email != _authServices.getCurrentUser()!.email) {
+    if (email != null &&
+        userId != null &&
+        email != _authServices.getCurrentUser()!.email) {
       return ListTile(
         leading: const Icon(Icons.person),
-        title: Text(email),
+        title: Text(email!),
         onTap: () {
           context.go('/chat/$email/$userId');
         },
