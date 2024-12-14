@@ -75,7 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       controller: controller,
                       decoration:
-                          const InputDecoration(hintText: "Введите сообщение"),
+                          const InputDecoration(hintText: "Введите сообщени"),
                     ),
                   ),
                   IconButton(
