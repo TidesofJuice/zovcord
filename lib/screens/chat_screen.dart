@@ -27,6 +27,18 @@ class _ChatScreenState extends State<ChatScreen> {
   final controller = TextEditingController();
   final ScrollController scrollController = ScrollController();
   bool emojiShowing = false;
+  bool isOnline = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserStatus();
+  }
+
+  Future<void> _loadUserStatus() async {
+    isOnline = await getUserStatus(widget.receiverId);
+    setState(() {});
+  }
 
   void scrollDown() {
     scrollController.animateTo(
@@ -58,11 +70,30 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Future<bool> getUserStatus(String userId) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    if (doc.exists) {
+      return doc.data()?['isOnline'] ?? false;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: Text(
+          widget.receiverEmail,
+        ),
+        actions: [
+          SizedBox(width: 10),
+          Text(
+            isOnline ? "Online" : "Offline",
+            style: TextStyle(
+                fontSize: 16, color: isOnline ? Colors.green : Colors.red),
+          ),
+        ],
       ),
       body: Center(
         child: Container(
