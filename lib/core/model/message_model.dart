@@ -7,16 +7,31 @@ class Message {
   final String message;
   final Timestamp timestamp;
 
-  Message(this.message, this.receiverId, this.senderEmail, this.senderID,
-      this.timestamp);
+  Message({
+    required this.senderID,
+    required this.senderEmail,
+    required this.receiverId,
+    required this.message,
+    required this.timestamp,
+  });
 
   Map<String, dynamic> toMap() {
     return {
-      "senderId": senderID,
-      "senderEmail": senderEmail,
-      "receiverId": receiverId,
-      "message": message,
-      "timeStamp": timestamp,
+      'senderId': senderID,
+      'senderEmail': senderEmail,
+      'receiverId': receiverId,
+      'message': message,
+      'timestamp': timestamp,
     };
+  }
+
+  factory Message.fromMap(Map<String, dynamic> map) {
+    return Message(
+      senderID: map['senderId'] as String,
+      senderEmail: map['senderEmail'] as String,
+      receiverId: map['receiverId'] as String,
+      message: map['message'] as String,
+      timestamp: map['timestamp'] as Timestamp,
+    );
   }
 }

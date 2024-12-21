@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final themeProvider =
             Provider.of<ThemeProvider>(context, listen: false);
         await themeProvider.reloadTheme();
-        context.go('/home');
+        context.go('/chat-list');
       }
     } catch (e) {
       if (context.mounted) {
