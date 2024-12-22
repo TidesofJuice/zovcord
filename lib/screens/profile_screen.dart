@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
-import 'package:zovcord/core/theme/styles/app_text_styles.dart';
 import 'package:zovcord/core/theme/theme_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -18,10 +17,11 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        iconTheme: Theme.of(context).appBarTheme.iconTheme,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(
           "Настройки",
-          style: AppTextStyles.appbar1,
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
       ),
       body: Center(
@@ -29,14 +29,18 @@ class SettingsScreen extends StatelessWidget {
           width: 600,
           height: 700,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (user != null)
                 ListTile(
                   title: const Text("Почта"),
+                  leading: IconTheme(
+                      data: Theme.of(context).iconTheme,
+                      child: Icon(Icons.mail)),
                   subtitle: Text(user.email ?? "Ошибка"),
                 ),
               ListTile(
-                title: const Text("Темная тема"),
+                title: const Text("Темы"),
                 trailing: Switch(
                   value: themeProvider.currentTheme == ThemeData.dark(),
                   onChanged: (_) {
@@ -45,6 +49,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
               ListTile(
+                iconColor: Theme.of(context).iconTheme.color,
                 title: const Text("Выйти"),
                 trailing: IconButton(
                   icon: const Icon(Icons.logout),

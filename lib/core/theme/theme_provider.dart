@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:zovcord/core/theme/themes/light_theme.dart';
 
 class ThemeProvider with ChangeNotifier {
-  ThemeData _currentTheme = ThemeData.light();
+  ThemeData _currentTheme = LightTheme.lightTheme;
   ThemeData get currentTheme => _currentTheme;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -14,10 +15,10 @@ class ThemeProvider with ChangeNotifier {
   }
 
   void toggleTheme() async {
-    if (_currentTheme == ThemeData.light()) {
+    if (_currentTheme == LightTheme.lightTheme) {
       _currentTheme = ThemeData.dark();
     } else {
-      _currentTheme = ThemeData.light();
+      _currentTheme = LightTheme.lightTheme;
     }
 
     await _saveThemeToFirestore(_currentTheme == ThemeData.dark());
@@ -43,7 +44,7 @@ class ThemeProvider with ChangeNotifier {
         final data = doc.data();
         if (data != null && data.containsKey('isDarkTheme')) {
           _currentTheme =
-              data['isDarkTheme'] ? ThemeData.dark() : ThemeData.light();
+              data['isDarkTheme'] ? ThemeData.dark() : LightTheme.lightTheme;
         }
       }
     }
