@@ -74,7 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final doc =
         await FirebaseFirestore.instance.collection('Users').doc(userId).get();
     if (doc.exists) {
-      return doc.data()?['isOnline'] ?? false;
+      return doc.data()?['is_online'] ?? false;
     }
     return false;
   }

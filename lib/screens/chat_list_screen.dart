@@ -4,6 +4,7 @@ import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
 import 'package:zovcord/core/services/chat_service.dart';
 import 'package:zovcord/core/theme/styles/app_text_styles.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final ChatService _chatService = locator.get();
 final AuthServices _authServices = locator.get();
@@ -64,25 +65,35 @@ class UserList extends StatelessWidget {
             shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
         width: 1000,
         height: 700,
-        child: StreamBuilder(
-          stream: _chatService.getuserStream(),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('Users').snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Center(child: Text("Ошибка загрузки пользователей"));
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
             }
-            if (!snapshot.hasData ||
-                snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: Text("ЗАГРУЗКА..."));
-            }
-            return ListView(
-              children: snapshot.data!
-                  .map<Widget>(
-                    (userData) => UserTile(
-                      email: userData["email"],
-                      userId: userData["uid"],
-                    ),
-                  )
-                  .toList(),
+
+            final users = snapshot.data!.docs;
+
+            return ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+                final data = user.data() as Map<String, dynamic>;
+
+                if (!data.containsKey('email') || !data.containsKey('uid')) {
+                  return const SizedBox.shrink();
+                }
+
+                final email = data['email'];
+                final userId = data['uid'];
+                final bool isOnline = data['is_online'] ?? false;
+
+                return UserTile(
+                  email: email,
+                  userId: userId,
+                  isOnline: isOnline,
+                );
+              },
             );
           },
         ),
@@ -92,10 +103,11 @@ class UserList extends StatelessWidget {
 }
 
 class UserTile extends StatelessWidget {
-  const UserTile({super.key, required this.email, required this.userId});
+  const UserTile({super.key, required this.email, required this.userId, required this.isOnline});
 
   final String? email;
   final String? userId;
+  final bool isOnline;
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +117,7 @@ class UserTile extends StatelessWidget {
       return ListTile(
         leading: const Icon(Icons.person),
         title: Text(email!),
+        subtitle: Text(isOnline ? "Online" : "Offline", style: TextStyle(color: isOnline ? Colors.green : Colors.red)),
         onTap: () {
           context.go('/chat/$email/$userId');
         },

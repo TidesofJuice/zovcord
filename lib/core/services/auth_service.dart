@@ -15,7 +15,7 @@ class AuthServices {
     final user = _auth.currentUser;
     if (user != null) {
       await _firestore.collection('Users').doc(user.uid).update({
-        'isOnline': isOnline,
+        'is_online': isOnline,
       });
     }
   }
@@ -30,8 +30,12 @@ class AuthServices {
   }
 
   Future<void> signOut() async {
+    try {
     await updateUserStatus(false);
     await _auth.signOut();
+    } on FirebaseAuthException catch (ex) {
+      throw Exception(ex.message);
+    }
   }
 
   Future<void> signUp(String email, String password) async {
@@ -42,7 +46,7 @@ class AuthServices {
         'uid': userCredential.user!.uid,
         'email': email,
         'isDarkTheme': false,
-        'isOnline': true,
+        'is_online': true,
       });
     } on FirebaseAuthException catch (ex) {
       throw Exception(ex.message);
