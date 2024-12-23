@@ -38,7 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
   Future<void> _loadUserStatus() async {
-    isOnline = await getUserStatus(widget.receiverId);
+    isOnline = await chatRepository.getUserStatus(widget.receiverId);
     setState(() {});
   }
 
@@ -50,14 +50,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _loadUserStatus();
   }
 
-  Future<bool> getUserStatus(String userId) async {
-    final doc =
-        await FirebaseFirestore.instance.collection('Users').doc(userId).get();
-    if (doc.exists) {
-      return doc.data()?['is_online'] ?? false;
-    }
-    return false;
-  }
+  
 
   @override
   Widget build(BuildContext context) {

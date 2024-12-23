@@ -26,6 +26,15 @@ class ChatRepository {
     });
   }
 
+  Future<bool> getUserStatus(String userId) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    if (doc.exists) {
+      return doc.data()?['is_online'] ?? false;
+    }
+    return false;
+  }
+
   Future<UserModel> getUserById(String uid) async {
     final doc = await _firestore.collection('Users').doc(uid).get();
     return UserModel.fromMap(doc.data()!);

@@ -128,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onPressed: () async {
                     await authService.signOut();
                     if (context.mounted) {
-                      Navigator.of(context).pushReplacementNamed('/login');
+                      context.go('/login');
                     }
                   },
                 ),
