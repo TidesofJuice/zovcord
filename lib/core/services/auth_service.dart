@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:zovcord/core/model/user_model.dart';
 
 class AuthServices {
   final FirebaseAuth _auth;
@@ -42,12 +43,12 @@ class AuthServices {
     try {
       final UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
-      await _firestore.collection('Users').doc(userCredential.user!.uid).set({
-        'uid': userCredential.user!.uid,
-        'email': email,
-        'theme': 1,
-        'is_online': true,
-      });
+      final user = UserModel(
+        id: userCredential.user!.uid,
+        email: email,
+        isDarkTheme: false,
+      );
+      await _firestore.collection('Users').doc(user.id).set(user.toMap());
     } on FirebaseAuthException catch (ex) {
       throw Exception(ex.message);
     }
