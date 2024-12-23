@@ -97,7 +97,10 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Center(
         child: Container(
-          width: 700,
+          decoration: ShapeDecoration(
+            shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          width: 1000,
           height: 600,
           child: Column(
             children: [
@@ -113,6 +116,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 onKeyEvent: _handleKeyEvent,
                 child: Row(
                   children: [
+                    SizedBox(width: 10,),
                     Expanded(
                       child: TextField(
                         controller: controller,

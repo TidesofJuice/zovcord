@@ -3,8 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
 import 'package:zovcord/core/services/chat_service.dart';
+
 import 'package:zovcord/core/theme/styles/app_text_styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 final ChatService _chatService = locator.get();
 final AuthServices _authServices = locator.get();
@@ -16,32 +18,18 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.amber,
-        title: Text("Список чатов", style: AppTextStyles.appbar1),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        iconTheme: Theme.of(context).appBarTheme.iconTheme,
+        title: Text("Список чатов",
+            style: Theme.of(context).appBarTheme.titleTextStyle),
         actions: [
           IconButton(
+            style: ButtonStyle(
+              iconColor: WidgetStateProperty.all(
+                  Theme.of(context).colorScheme.onPrimary),
+            ),
             icon: const Icon(
               Icons.settings,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                    // bottomLeft
-                    offset: Offset(-1, -1),
-                    color: Colors.black),
-                Shadow(
-                    // bottomRight
-                    offset: Offset(1, -1),
-                    color: Colors.black),
-                Shadow(
-                    // topRight
-                    offset: Offset(1, 1),
-                    color: Colors.black),
-                Shadow(
-                    // topLeft
-                    offset: Offset(-1, 1),
-                    color: Colors.black),
-              ],
             ),
             onPressed: () {
               context.go('/settings');
@@ -49,7 +37,9 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: UserList(),
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: UserList()),
     );
   }
 }
@@ -115,7 +105,13 @@ class UserTile extends StatelessWidget {
         userId != null &&
         email != _authServices.getCurrentUser()!.email) {
       return ListTile(
-        leading: const Icon(Icons.person),
+        shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        hoverColor: Theme.of(context).colorScheme.tertiary,
+        textColor: Theme.of(context).colorScheme.onSecondary,
+        leading: IconTheme(
+          data: Theme.of(context).iconTheme,
+          child: const Icon(Icons.person),
+        ),
         title: Text(email!),
         subtitle: Text(isOnline ? "Online" : "Offline", style: TextStyle(color: isOnline ? Colors.green : Colors.red)),
         onTap: () {
