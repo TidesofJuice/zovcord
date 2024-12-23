@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
-import 'package:zovcord/core/theme/styles/app_text_styles.dart';
 import 'package:zovcord/core/repository/chat_repository.dart';
 
 final AuthServices _authServices = locator.get();
@@ -35,9 +35,6 @@ class ChatListScreen extends StatelessWidget {
         ],
       ),
       body: const UserList(),
-      body: Container(
-        color: Theme.of(context).colorScheme.surface,
-        child: UserList()),
     );
   }
 }
@@ -53,8 +50,6 @@ class UserList extends StatelessWidget {
             shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
         width: 1000,
         height: 700,
-        child: StreamBuilder(
-          stream: _chatRepository.getUserStream(),
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('Users').snapshots(),
           builder: (context, snapshot) {

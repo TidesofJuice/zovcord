@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
@@ -50,13 +51,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.amber,
-        title: const Text('Настройки'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             context.go('/chat-list');
           },
+        ),
         iconTheme: Theme.of(context).appBarTheme.iconTheme,
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(
@@ -73,7 +73,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               if (user != null)
                 ListTile(
-                  title: const Text("Почта",),
+                  title: const Text(
+                    "Почта",
+                  ),
                   leading: IconTheme(
                       data: Theme.of(context).iconTheme,
                       child: Icon(Icons.mail)),

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:zovcord/core/model/user_model.dart';
 import 'package:zovcord/core/services/auth_service.dart';
@@ -35,11 +36,6 @@ class _ChatScreenState extends State<ChatScreen> {
   bool emojiShowing = false;
   bool isOnline = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUserStatus();
-  }
 
   Future<void> _loadUserStatus() async {
     isOnline = await getUserStatus(widget.receiverId);
@@ -51,6 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     chatController = ChatController(controller, scrollController);
     receiver = chatRepository.getUserById(widget.receiverId);
+    _loadUserStatus();
   }
 
   Future<bool> getUserStatus(String userId) async {
@@ -78,15 +75,6 @@ class _ChatScreenState extends State<ChatScreen> {
             }
           },
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/chat-list');
-          },
-        ),
-        title: Text(
-          widget.receiverEmail,
-        ),
         actions: [
           SizedBox(width: 10),
           Text(
@@ -95,6 +83,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 fontSize: 16, color: isOnline ? Colors.green : Colors.red),
           ),
         ],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/chat-list');
+          },
+        ),
+        
+        
       ),
       body: Center(
         child: Container(
