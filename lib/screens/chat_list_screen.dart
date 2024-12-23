@@ -34,7 +34,9 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: UserList(),
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: UserList()),
     );
   }
 }

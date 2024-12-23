@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
 import 'package:zovcord/core/theme/theme_provider.dart';
+import 'package:zovcord/core/theme/themes/dark_theme.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -33,19 +34,49 @@ class SettingsScreen extends StatelessWidget {
             children: [
               if (user != null)
                 ListTile(
-                  title: const Text("Почта"),
+                  title: const Text("Почта",),
                   leading: IconTheme(
                       data: Theme.of(context).iconTheme,
                       child: Icon(Icons.mail)),
                   subtitle: Text(user.email ?? "Ошибка"),
                 ),
-              ListTile(
+              /*ListTile(
                 title: const Text("Темы"),
                 trailing: Switch(
-                  value: themeProvider.currentTheme == ThemeData.dark(),
+                  activeTrackColor: Theme.of(context).iconTheme.color,
+                  value: themeProvider.currentTheme == DarkTheme.darkTheme,
                   onChanged: (_) {
                     themeProvider.toggleTheme();
                   },
+                ),
+              ),
+              */
+              ListTile(
+                title: const Text("Темы"),
+                trailing: PopupMenuButton<int>(
+                  onSelected: (value) {
+                    themeProvider.toggleTheme(value);
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: const Text('Light theme'),
+                      value: 1,
+                    ),
+                    PopupMenuItem(
+                      child: const Text('Dark theme'),
+                      value: 2,
+                    ),
+                    PopupMenuItem(
+                      child: const Text('Violet theme'),
+                      value: 3,
+                    ),
+                    PopupMenuItem(
+                      child: const Text('Pink theme'),
+                      value: 4,
+                    ),
+                  ],
+                  icon: Icon(Icons.brush),
+                  tooltip: "Выбор темы",
                 ),
               ),
               ListTile(
@@ -61,6 +92,7 @@ class SettingsScreen extends StatelessWidget {
                   },
                 ),
               ),
+              
             ],
           ),
         ),
