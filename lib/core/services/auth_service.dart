@@ -45,7 +45,7 @@ class AuthServices {
       await _firestore.collection('Users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'email': email,
-        'isDarkTheme': false,
+        'theme': 1,
         'is_online': true,
       });
     } on FirebaseAuthException catch (ex) {
