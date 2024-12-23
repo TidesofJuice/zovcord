@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:zovcord/core/model/message_model.dart';
 import 'package:zovcord/core/model/chat_model.dart';
+import 'package:zovcord/core/model/user_model.dart';
 
 class ChatRepository {
   final FirebaseFirestore _firestore;
@@ -17,6 +18,17 @@ class ChatRepository {
         return user;
       }).toList();
     });
+  }
+
+   Future<void> updateNickname(String uid, String nickname) async {
+    await _firestore.collection('Users').doc(uid).update({
+      'nickname': nickname,
+    });
+  }
+
+  Future<UserModel> getUserById(String uid) async {
+    final doc = await _firestore.collection('Users').doc(uid).get();
+    return UserModel.fromMap(doc.data()!);
   }
 
   /// Создает новый чат, если он еще не существует.

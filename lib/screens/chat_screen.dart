@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:zovcord/core/model/user_model.dart';
 import 'package:zovcord/core/services/auth_service.dart';
 import 'package:zovcord/core/repository/chat_repository.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:zovcord/core/widgets/chat_screen_widget.dart' as chat_widgets;
 import 'package:get_it/get_it.dart';
 import 'package:zovcord/core/logic/chat_controller.dart';
+import 'package:go_router/go_router.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -29,18 +31,37 @@ class _ChatScreenState extends State<ChatScreen> {
   final controller = TextEditingController();
   final ScrollController scrollController = ScrollController();
   late ChatController chatController;
+  late Future<UserModel> receiver;
 
   @override
   void initState() {
     super.initState();
     chatController = ChatController(controller, scrollController);
+    receiver = chatRepository.getUserById(widget.receiverId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: FutureBuilder<UserModel>(
+          future: receiver,
+          builder: (context, snapshot) {
+                   if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('Загрузка...');
+            } else if (snapshot.hasError) {
+              return const Text('Ошибка');
+            } else {
+              return Text(snapshot.data?.nickname ?? 'No Name');
+            }
+          },
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/chat-list');
+          },
+        ),
       ),
       body: Center(
         child: Container(

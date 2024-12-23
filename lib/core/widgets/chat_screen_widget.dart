@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zovcord/core/repository/chat_repository.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
+import 'package:zovcord/core/model/user_model.dart';
 
 final AuthServices authService = locator.get();
 final ChatRepository chatRepository = locator.get();
@@ -66,9 +67,20 @@ class MessageItem extends StatelessWidget {
           crossAxisAlignment:
               isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Text(
-              data['senderEmail'],
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+            FutureBuilder<UserModel>(
+              future: chatRepository.getUserById(data['senderId']),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text('Загрузка...');
+                } else if (snapshot.hasError) {
+                  return const Text('Ошибка');
+                } else {
+                  return Text(
+                    snapshot.data!.nickname ?? 'Unknown',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  );
+                }
+              },
             ),
             Text(
               data["message"],
