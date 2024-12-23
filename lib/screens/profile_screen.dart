@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
@@ -87,7 +86,7 @@ class SettingsScreen extends StatelessWidget {
                   onPressed: () async {
                     await authService.signOut();
                     if (context.mounted) {
-                      context.go('/login');
+                      Navigator.of(context).pushReplacementNamed('/login');
                     }
                   },
                 ),
