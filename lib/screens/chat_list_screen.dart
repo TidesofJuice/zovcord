@@ -15,32 +15,18 @@ class ChatListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.amber,
-        title: Text("Список чатов", style: AppTextStyles.appbar1),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        iconTheme: Theme.of(context).appBarTheme.iconTheme,
+        title: Text("Список чатов",
+            style: Theme.of(context).appBarTheme.titleTextStyle),
         actions: [
           IconButton(
+            style: ButtonStyle(
+              iconColor: WidgetStateProperty.all(
+                  Theme.of(context).colorScheme.onPrimary),
+            ),
             icon: const Icon(
               Icons.settings,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                    // bottomLeft
-                    offset: Offset(-1, -1),
-                    color: Colors.black),
-                Shadow(
-                    // bottomRight
-                    offset: Offset(1, -1),
-                    color: Colors.black),
-                Shadow(
-                    // topRight
-                    offset: Offset(1, 1),
-                    color: Colors.black),
-                Shadow(
-                    // topLeft
-                    offset: Offset(-1, 1),
-                    color: Colors.black),
-              ],
             ),
             onPressed: () {
               context.go('/settings');
@@ -49,6 +35,9 @@ class ChatListScreen extends StatelessWidget {
         ],
       ),
       body: const UserList(),
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: UserList()),
     );
   }
 }
@@ -66,23 +55,35 @@ class UserList extends StatelessWidget {
         height: 700,
         child: StreamBuilder(
           stream: _chatRepository.getUserStream(),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('Users').snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Center(child: Text("Ошибка загрузки пользователей"));
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
             }
-            if (!snapshot.hasData ||
-                snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: Text("ЗАГРУЗКА..."));
-            }
-            return ListView(
-              children: snapshot.data!
-                  .map<Widget>(
-                    (userData) => UserTile(
-                      email: userData["email"],
-                      userId: userData["uid"],
-                    ),
-                  )
-                  .toList(),
+
+            final users = snapshot.data!.docs;
+
+            return ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+                final data = user.data() as Map<String, dynamic>;
+
+                if (!data.containsKey('email') || !data.containsKey('uid')) {
+                  return const SizedBox.shrink();
+                }
+
+                final email = data['email'];
+                final userId = data['uid'];
+                final bool isOnline = data['is_online'] ?? false;
+
+                return UserTile(
+                  email: email,
+                  userId: userId,
+                  isOnline: isOnline,
+                );
+              },
             );
           },
         ),
@@ -92,10 +93,11 @@ class UserList extends StatelessWidget {
 }
 
 class UserTile extends StatelessWidget {
-  const UserTile({super.key, required this.email, required this.userId});
+  const UserTile({super.key, required this.email, required this.userId, required this.isOnline});
 
   final String? email;
   final String? userId;
+  final bool isOnline;
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +105,15 @@ class UserTile extends StatelessWidget {
         userId != null &&
         email != _authServices.getCurrentUser()!.email) {
       return ListTile(
-        leading: const Icon(Icons.person),
+        shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        hoverColor: Theme.of(context).colorScheme.tertiary,
+        textColor: Theme.of(context).colorScheme.onSecondary,
+        leading: IconTheme(
+          data: Theme.of(context).iconTheme,
+          child: const Icon(Icons.person),
+        ),
         title: Text(email!),
+        subtitle: Text(isOnline ? "Online" : "Offline", style: TextStyle(color: isOnline ? Colors.green : Colors.red)),
         onTap: () {
           context.go('/chat/$email/$userId');
         },

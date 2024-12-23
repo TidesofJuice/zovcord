@@ -32,12 +32,34 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController scrollController = ScrollController();
   late ChatController chatController;
   late Future<UserModel> receiver;
+  bool emojiShowing = false;
+  bool isOnline = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserStatus();
+  }
+
+  Future<void> _loadUserStatus() async {
+    isOnline = await getUserStatus(widget.receiverId);
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
     chatController = ChatController(controller, scrollController);
     receiver = chatRepository.getUserById(widget.receiverId);
+  }
+
+  Future<bool> getUserStatus(String userId) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    if (doc.exists) {
+      return doc.data()?['is_online'] ?? false;
+    }
+    return false;
   }
 
   @override
@@ -62,10 +84,24 @@ class _ChatScreenState extends State<ChatScreen> {
             context.go('/chat-list');
           },
         ),
+        title: Text(
+          widget.receiverEmail,
+        ),
+        actions: [
+          SizedBox(width: 10),
+          Text(
+            isOnline ? "Online" : "Offline",
+            style: TextStyle(
+                fontSize: 16, color: isOnline ? Colors.green : Colors.red),
+          ),
+        ],
       ),
       body: Center(
         child: Container(
-          width: 700,
+          decoration: ShapeDecoration(
+            shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          width: 1000,
           height: 600,
           child: Column(
             children: [
@@ -81,6 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 onKeyEvent: (event) => chatController.onKey(event, widget.receiverId),
                 child: Row(
                   children: [
+                    SizedBox(width: 10,),
                     Expanded(
                       child: TextField(
                         controller: controller,
