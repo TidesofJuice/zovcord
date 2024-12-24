@@ -9,14 +9,16 @@ import 'package:zovcord/core/router/app_router.dart';
 import 'package:zovcord/core/config/firebase_options.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); // Инициализация привязки Flutter
 
+  // Инициализация Firebase с указанными параметрами
   await Firebase.initializeApp(
     options: firebaseOptions,
   );
-  await initServiceLocator();
+  await initServiceLocator(); // Инициализация сервис-локатора
 
   final authService = locator.get<AuthServices>();
+  // Подписка на изменения состояния аутентификации Firebase
   FirebaseAuth.instance.authStateChanges().listen((User? user) {
     if (user == null) {
       authService.updateUserStatus(false); // Обновление статуса на оффлайн
@@ -25,9 +27,11 @@ void main() async {
     }
   });
 
+  // Запуск приложения с провайдерами
   runApp(
     MultiProvider(
       providers: [
+        // Добавление провайдера для управления темой
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
       ],
       child: const MyApp(),
@@ -40,11 +44,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider =
+        Provider.of<ThemeProvider>(context); // Получение текущей темы
     return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      theme: themeProvider.currentTheme,
-      routerConfig: router,
+      debugShowCheckedModeBanner: false, // Убираем баннер отладки
+      theme: themeProvider.currentTheme, // Устанавливаем текущую тему
+      routerConfig: router, // Конфигурация маршрутизации
     );
   }
 }

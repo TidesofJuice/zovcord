@@ -16,32 +16,27 @@ class LightTheme {
           onError: Colors.black,
           surface: Color(0xffd1dded),
           onSurface: Colors.black),
-          
-
-          appBarTheme: AppBarTheme(
-            backgroundColor: Color(0xff3684db),
-            centerTitle: true,
-            titleTextStyle: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
-            ),
-            iconTheme: IconThemeData(
-              color: Colors.white,
-              applyTextScaling: true
-            ),
-          ), 
-          buttonTheme: ButtonThemeData(
-            buttonColor: Color(0xff3684db),
-            textTheme: ButtonTextTheme.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-          iconTheme: IconThemeData(
-            color: Color(0xff3684db),
-            size: 24,
-          ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Color(0xff3684db),
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+        ),
+        iconTheme: IconThemeData(color: Colors.white, applyTextScaling: true),
+      ),
+      buttonTheme: ButtonThemeData(
+        buttonColor: Color(0xff3684db),
+        textTheme: ButtonTextTheme.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+      iconTheme: IconThemeData(
+        color: Color(0xff3684db),
+        size: 24,
+      ),
     );
   }
 }
