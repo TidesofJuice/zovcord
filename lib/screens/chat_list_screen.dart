@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
-import 'package:zovcord/core/theme/styles/app_text_styles.dart';
 import 'package:zovcord/core/repository/chat_repository.dart';
+import 'package:zovcord/core/model/user_model.dart';
 
 final AuthServices _authServices = locator.get();
 final ChatRepository _chatRepository = locator.get();
@@ -21,10 +21,6 @@ class ChatListScreen extends StatelessWidget {
             style: Theme.of(context).appBarTheme.titleTextStyle),
         actions: [
           IconButton(
-            style: ButtonStyle(
-              iconColor: WidgetStateProperty.all(
-                  Theme.of(context).colorScheme.onPrimary),
-            ),
             icon: const Icon(
               Icons.settings,
             ),
@@ -34,10 +30,10 @@ class ChatListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const UserList(),
       body: Container(
         color: Theme.of(context).colorScheme.surface,
-        child: UserList()),
+        child: const UserList(),
+      ),
     );
   }
 }
@@ -53,35 +49,34 @@ class UserList extends StatelessWidget {
             shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
         width: 1000,
         height: 700,
-        child: StreamBuilder(
+        child: StreamBuilder<List<UserModel>>(
           stream: _chatRepository.getUserStream(),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('Users').snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
+            
+            if (snapshot.hasError) {
+              print('Ошибка: ${snapshot.error}');
+              return Center(child: Text('Ошибка загрузки: ${snapshot.error}'));
+            }
 
-            final users = snapshot.data!.docs;
+            final users = snapshot.data ?? [];
+            
+            if (users.isEmpty) {
+              return const Center(child: Text('Нет доступных пользователей'));
+            }
 
             return ListView.builder(
               itemCount: users.length,
               itemBuilder: (context, index) {
                 final user = users[index];
-                final data = user.data() as Map<String, dynamic>;
-
-                if (!data.containsKey('email') || !data.containsKey('uid')) {
-                  return const SizedBox.shrink();
-                }
-
-                final email = data['email'];
-                final userId = data['uid'];
-                final bool isOnline = data['is_online'] ?? false;
 
                 return UserTile(
-                  email: email,
-                  userId: userId,
-                  isOnline: isOnline,
+                  email: user.email,
+                  userId: user.id,
+                  isOnline: user.isOnline,
+                  nickname: user.nickname,
                 );
               },
             );
@@ -93,17 +88,25 @@ class UserList extends StatelessWidget {
 }
 
 class UserTile extends StatelessWidget {
-  const UserTile({super.key, required this.email, required this.userId, required this.isOnline});
+  const UserTile({
+    super.key, 
+    required this.email, 
+    required this.userId, 
+    required this.isOnline,
+    this.nickname,
+  });
 
-  final String? email;
-  final String? userId;
+  final String email;
+  final String userId;
   final bool isOnline;
+  final String? nickname;
 
   @override
   Widget build(BuildContext context) {
-    if (email != null &&
-        userId != null &&
-        email != _authServices.getCurrentUser()!.email) {
+    final currentUser = _authServices.getCurrentUser();
+    final displayName = nickname?.isNotEmpty == true ? nickname! : email;
+    
+    if (currentUser != null && email != currentUser.email) {
       return ListTile(
         shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(24)),
         hoverColor: Theme.of(context).colorScheme.tertiary,
@@ -112,10 +115,16 @@ class UserTile extends StatelessWidget {
           data: Theme.of(context).iconTheme,
           child: const Icon(Icons.person),
         ),
-        title: Text(email!),
-        subtitle: Text(isOnline ? "Online" : "Offline", style: TextStyle(color: isOnline ? Colors.green : Colors.red)),
+        title: Text(displayName),
+        subtitle: Text(
+          isOnline ? "Online" : "Offline",
+          style: TextStyle(
+            color: isOnline ? Colors.green : Colors.red
+          ),
+        ),
         onTap: () {
-          context.go('/chat/$email/$userId');
+          final encodedEmail = Uri.encodeComponent(email);
+          context.go('/chat-with/$encodedEmail/$userId');
         },
       );
     }

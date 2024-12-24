@@ -38,28 +38,14 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    chatController = ChatController(controller, scrollController);
+    receiver = chatRepository.getUserById(widget.receiverId);
     _loadUserStatus();
   }
 
   Future<void> _loadUserStatus() async {
-    isOnline = await getUserStatus(widget.receiverId);
+    isOnline = await chatRepository.getUserStatus(widget.receiverId);
     setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    chatController = ChatController(controller, scrollController);
-    receiver = chatRepository.getUserById(widget.receiverId);
-  }
-
-  Future<bool> getUserStatus(String userId) async {
-    final doc =
-        await FirebaseFirestore.instance.collection('Users').doc(userId).get();
-    if (doc.exists) {
-      return doc.data()?['is_online'] ?? false;
-    }
-    return false;
   }
 
   @override
@@ -69,23 +55,21 @@ class _ChatScreenState extends State<ChatScreen> {
         title: FutureBuilder<UserModel>(
           future: receiver,
           builder: (context, snapshot) {
-                   if (snapshot.connectionState == ConnectionState.waiting) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('Загрузка...');
             } else if (snapshot.hasError) {
               return const Text('Ошибка');
             } else {
-              return Text(snapshot.data?.nickname ?? 'No Name');
+              final displayName = snapshot.data?.nickname?.isNotEmpty == true ? snapshot.data?.nickname : widget.receiverEmail;
+              return Text(displayName ?? 'No Name');
             }
           },
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/chat-list');
+            context.go('/chatlist');
           },
-        ),
-        title: Text(
-          widget.receiverEmail,
         ),
         actions: [
           SizedBox(width: 10),

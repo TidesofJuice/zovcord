@@ -1,49 +1,50 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class ChatModel {
-  final String id;
+  final String chatid;
   final List<String> members;
   final String? lastMessage;
-  final DateTime? lastMessageTime;
+  final Timestamp timestamp;
 
   const ChatModel({
-    required this.id,
+    required this.chatid,
     required this.members,
     this.lastMessage,
-    this.lastMessageTime,
+    required this.timestamp,
   });
 
   ChatModel copyWith({
-    String? id,
+    String? chatid,
     List<String>? members,
     String? lastMessage,
-    DateTime? lastMessageTime,
+    Timestamp? timestamp,
   }) {
     return ChatModel(
-      id: id ?? this.id,
+      chatid: chatid ?? this.chatid,
       members: members ?? this.members,
       lastMessage: lastMessage ?? this.lastMessage,
-      lastMessageTime: lastMessageTime ?? this.lastMessageTime,
+      timestamp: timestamp ?? this.timestamp,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
+    return <String, dynamic>{
+      'chatid': chatid,
       'members': members,
       'lastMessage': lastMessage,
-      'lastMessageTime': lastMessageTime?.millisecondsSinceEpoch,
+      'timestamp': timestamp.toDate().toIso8601String(),
     };
   }
 
   factory ChatModel.fromMap(Map<String, dynamic> map) {
     return ChatModel(
-      id: map['id'] as String,
-      members: List<String>.from(map['members'] as List<dynamic>),
-      lastMessage: map['lastMessage'] as String?,
-      lastMessageTime: map['lastMessageTime'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['lastMessageTime'] as int)
-          : null,
+      chatid: map['chatid'] as String,
+      members: List<String>.from(map['members'] as List),
+      lastMessage: map['lastMessage'] != null ? map['lastMessage'] as String : null,
+      timestamp: (map['timestamp'] as Timestamp),
     );
   }
 
@@ -54,25 +55,25 @@ class ChatModel {
 
   @override
   String toString() {
-    return 'ChatModel(id: $id, members: $members, lastMessage: $lastMessage, lastMessageTime: $lastMessageTime)';
+    return 'ChatModel(chatid: $chatid, members: $members, lastMessage: $lastMessage, timestamp: $timestamp)';
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant ChatModel other) {
     if (identical(this, other)) return true;
-
-    return other is ChatModel &&
-        other.id == id &&
-        other.members == members &&
-        other.lastMessage == lastMessage &&
-        other.lastMessageTime == lastMessageTime;
+  
+    return 
+      other.chatid == chatid &&
+      listEquals(other.members, members) &&
+      other.lastMessage == lastMessage &&
+      other.timestamp == timestamp;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^
-        members.hashCode ^
-        lastMessage.hashCode ^
-        lastMessageTime.hashCode;
+    return chatid.hashCode ^
+      members.hashCode ^
+      lastMessage.hashCode ^
+      timestamp.hashCode;
   }
 }

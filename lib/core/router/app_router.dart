@@ -11,7 +11,7 @@ final GoRouter router = GoRouter(
   initialLocation: '/login',
   routes: [
     GoRoute(
-      path: '/chat-list',
+      path: '/chatlist',
       builder: (context, state) => const ChatListScreen(),
     ),
     GoRoute(
@@ -27,17 +27,19 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const SettingsScreen(),
     ),
     GoRoute(
-      path: '/chat/:receiverEmail/:receiverId',
+      path: '/chat-with/:email/:userId',
       builder: (BuildContext context, GoRouterState state) {
+        final email = Uri.decodeComponent(state.pathParameters['email']!);
+        final userId = state.pathParameters['userId']!;
+        
         return ChatScreen(
-          receiverEmail: state.pathParameters['receiverEmail']!,
-          receiverId: state.pathParameters['receiverId']!,
+          receiverEmail: email,
+          receiverId: userId,
         );
       },
     ),
   ],
   redirect: (context, state) {
-    // Проверка авторизации
     final isAuthenticated = FirebaseAuth.instance.currentUser != null;
     final isGoingToLogin = state.uri.toString() == '/login';
 

@@ -4,6 +4,7 @@ import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
 import 'package:zovcord/core/theme/theme_provider.dart';
 import 'package:zovcord/core/repository/chat_repository.dart';
+import 'package:go_router/go_router.dart';
 
 final AuthServices authService = locator.get();
 final ChatRepository chatRepository = locator.get();
@@ -17,7 +18,25 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController nicknameController = TextEditingController();
+  String? currentNickname;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentNickname();
+  }
+
+  Future<void> _loadCurrentNickname() async {
+    final user = authService.getCurrentUser();
+    if (user != null) {
+      final nickname = await chatRepository.getCurrentNickname(user.uid);
+      setState(() {
+        currentNickname = nickname;
+        nicknameController.text = nickname ?? '';
+      });
+    }
+  }
 
   Future<void> _updateNickname() async {
     setState(() {
@@ -31,6 +50,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Никнейм обновлен')),
       );
+      setState(() {
+        currentNickname = nicknameController.text;
+      });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ошибка обновления никнейма: $e')),
@@ -57,11 +79,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: () {
             context.go('/chat-list');
           },
-        iconTheme: Theme.of(context).appBarTheme.iconTheme,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(
-          "Настройки",
-          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
       ),
       body: Center(
@@ -79,17 +96,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Icon(Icons.mail)),
                   subtitle: Text(user.email ?? "Ошибка"),
                 ),
-              /*ListTile(
-                title: const Text("Темы"),
-                trailing: Switch(
-                  activeTrackColor: Theme.of(context).iconTheme.color,
-                  value: themeProvider.currentTheme == DarkTheme.darkTheme,
-                  onChanged: (_) {
-                    themeProvider.toggleTheme();
-                  },
+              if (currentNickname != null)
+                ListTile(
+                  title: const Text("Текущий никнейм"),
+                  subtitle: Text(currentNickname!),
                 ),
+              TextField(
+                controller: nicknameController,
+                decoration: const InputDecoration(labelText: 'Никнейм'),
               ),
-              */
+              const SizedBox(height: 20),
+              _isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: _updateNickname,
+                      child: const Text('Обновить никнейм'),
+                    ),
               ListTile(
                 title: const Text("Темы"),
                 trailing: PopupMenuButton<int>(
@@ -131,17 +153,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
               ),
-              TextField(
-                controller: nicknameController,
-                decoration: const InputDecoration(labelText: 'Никнейм'),
-              ),
-              const SizedBox(height: 20),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _updateNickname,
-                      child: const Text('Обновить никнейм'),
-                    ),
             ],
           ),
         ),

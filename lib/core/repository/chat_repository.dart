@@ -11,24 +11,56 @@ class ChatRepository {
   ChatRepository(this._firestore, this._auth);
 
   /// Получает список пользователей.
-  Stream<List<Map<String, dynamic>>> getUserStream() {
+  Stream<List<UserModel>> getUserStream() {
     return _firestore.collection('Users').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        final user = doc.data();
-        return user;
+        final data = doc.data();
+        try {
+          return UserModel.fromMap(data);
+        } catch (e) {
+          print('Ошибка преобразования данных: $e');
+          return UserModel(
+            id: data['id'] ?? '',
+            email: data['email'] ?? '',
+            nickname: data['nickname'],
+            isDarkTheme: false,
+            isOnline: false,
+            theme: 1,
+          );
+        }
       }).toList();
     });
   }
 
-   Future<void> updateNickname(String uid, String nickname) async {
+  /// Обновляет никнейм пользователя.
+  Future<void> updateNickname(String uid, String nickname) async {
     await _firestore.collection('Users').doc(uid).update({
       'nickname': nickname,
     });
   }
 
+  /// Получает пользователя по ID.
   Future<UserModel> getUserById(String uid) async {
     final doc = await _firestore.collection('Users').doc(uid).get();
     return UserModel.fromMap(doc.data()!);
+  }
+
+  /// Получает текущий никнейм пользователя.
+  Future<String?> getCurrentNickname(String uid) async {
+    final doc = await _firestore.collection('Users').doc(uid).get();
+    if (doc.exists) {
+      return doc.data()?['nickname'];
+    }
+    return null;
+  }
+
+  /// Получает статус пользователя.
+  Future<bool> getUserStatus(String userId) async {
+    final doc = await _firestore.collection('Users').doc(userId).get();
+    if (doc.exists) {
+      return doc.data()?['is_online'] ?? false;
+    }
+    return false;
   }
 
   /// Создает новый чат, если он еще не существует.

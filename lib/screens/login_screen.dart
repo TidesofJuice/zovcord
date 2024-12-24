@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final themeProvider =
             Provider.of<ThemeProvider>(context, listen: false);
         await themeProvider.reloadTheme();
-        context.go('/chat-list');
+        context.go('/chatlist');
       }
     } catch (e) {
       if (context.mounted) {
@@ -104,14 +104,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? const CircularProgressIndicator()
                           : const Text('Войти'),
                     ),
-                    if (widget.callBack != null)
-                      TextButton(
-                        onPressed: widget.callBack,
-                        child: const Text(
-                          'Зарегистрироваться',
-                          style: TextStyle(fontSize: 24, color: Colors.white),
-                        ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(400, 50),
+                        backgroundColor: Theme.of(context).colorScheme.secondary,
                       ),
+                      onPressed: () => context.go('/register'),
+                      child: const Text(
+                        'Зарегистрироваться',
+                        style: TextStyle(fontSize: 24, color: Colors.white),
+                      ),
+                    ),
                   ],
                 ),
               ),

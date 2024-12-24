@@ -15,8 +15,7 @@ Future<void> initServiceLocator() async {
 
   locator.registerSingleton<FirebaseFirestore>(FirebaseFirestore.instance);
 
-  locator.registerSingleton<AuthServices>(
-      AuthServices(locator.get(), locator.get()));
+  locator.registerSingleton<AuthServices>(AuthServices());
 
   locator.registerSingleton<ChatRepository>(
       ChatRepository(locator.get(), locator.get()));

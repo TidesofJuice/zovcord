@@ -6,12 +6,16 @@ class UserModel {
   final String email; // Email пользователя
   final String? nickname; // Имя пользователя (опционально)
   final bool isDarkTheme; // Настройка темы (темная/светлая)
+  final bool isOnline; // Статус пользователя (онлайн/оффлайн)
+  final int theme; // Тема приложения
 
   UserModel({
     required this.id,
     required this.email,
     this.nickname,
-    this.isDarkTheme = false, // По умолчанию светлая тема
+    required this.isDarkTheme,
+    required this.isOnline,
+    required this.theme,
   });
 
   // Метод для преобразования объекта в Map
@@ -21,16 +25,20 @@ class UserModel {
       'email': email,
       'nickname': nickname,
       'isDarkTheme': isDarkTheme,
+      'isOnline': isOnline,
+      'theme': theme,
     };
   }
 
   // Фабричный метод для создания объекта из Map
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'] as String,
-      email: map['email'] as String,
-      nickname: map['nickname'] != null ? map['nickname'] as String : null,
-      isDarkTheme: map['isDarkTheme'] as bool,
+      id: map['id'] ?? '',
+      email: map['email'] ?? '',
+      nickname: map['nickname'],
+      isDarkTheme: map['isDarkTheme'] ?? false,
+      isOnline: map['isOnline'] == 1 ? true : false, // Преобразуем int в bool
+      theme: map['theme'] ?? 1,
     );
   }
 
@@ -40,43 +48,4 @@ class UserModel {
   // Фабричный метод для создания объекта из JSON
   factory UserModel.fromJson(String source) =>
       UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  // Метод для создания копии объекта с возможностью изменения полей
-  UserModel copyWith({
-    String? id,
-    String? email,
-    String? nickname,
-    bool? isDarkTheme,
-  }) {
-    return UserModel(
-      id: id ?? this.id,
-      email: email ?? this.email,
-      nickname: nickname ?? this.nickname,
-      isDarkTheme: isDarkTheme ?? this.isDarkTheme,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'UserModel(id: $id, email: $email, nickname: $nickname, isDarkTheme: $isDarkTheme)';
-  }
-
-  @override
-  bool operator ==(covariant UserModel other) {
-    if (identical(this, other)) return true;
-  
-    return 
-      other.id == id &&
-      other.email == email &&
-      other.nickname == nickname &&
-      other.isDarkTheme == isDarkTheme;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-      email.hashCode ^
-      nickname.hashCode ^
-      isDarkTheme.hashCode;
-  }
 }
