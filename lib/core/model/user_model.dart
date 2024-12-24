@@ -1,6 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Модель данных пользователя
 class UserModel {
   final String id; // Уникальный идентификатор пользователя
   final String email; // Email пользователя
@@ -8,7 +9,10 @@ class UserModel {
   final bool isDarkTheme; // Настройка темы (темная/светлая)
   final bool isOnline; // Статус пользователя (онлайн/оффлайн)
   final int theme; // Тема приложения
+  String? lastMessage; // Последнее сообщение
+  Timestamp? lastMessageTime; // Время последнего сообщения
 
+  // Конструктор для инициализации объекта UserModel
   UserModel({
     required this.id,
     required this.email,
@@ -16,6 +20,8 @@ class UserModel {
     required this.isDarkTheme,
     required this.isOnline,
     required this.theme,
+    this.lastMessage,
+    this.lastMessageTime,
   });
 
   // Метод для преобразования объекта в Map
@@ -27,6 +33,8 @@ class UserModel {
       'isDarkTheme': isDarkTheme,
       'isOnline': isOnline,
       'theme': theme,
+      'lastMessage': lastMessage,
+      'lastMessageTime': lastMessageTime,
     };
   }
 
@@ -37,8 +45,10 @@ class UserModel {
       email: map['email'] ?? '',
       nickname: map['nickname'],
       isDarkTheme: map['isDarkTheme'] ?? false,
-      isOnline: map['isOnline'] == 1 ? true : false, // Преобразуем int в bool
+      isOnline: map['isOnline'] ?? false,
       theme: map['theme'] ?? 1,
+      lastMessage: map['lastMessage'],
+      lastMessageTime: map['lastMessageTime'],
     );
   }
 
