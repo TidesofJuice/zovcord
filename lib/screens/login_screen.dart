@@ -88,8 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         textStyle:
                             const TextStyle(color: Colors.black, fontSize: 20),
                         minimumSize: const Size(400, 50),
-                        backgroundColor:
-                            const Color.fromARGB(255, 211, 205, 255),
+                        backgroundColor: Colors.white,
                         overlayColor: Colors.black,
                       ),
                       onPressed: _isLoading
@@ -102,20 +101,20 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                       child: _isLoading
                           ? const CircularProgressIndicator()
-                          : const Text('Войти'),
+                          : const Text(
+                              'Войти',
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.black),
+                            ),
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(400, 50),
-                        backgroundColor: Theme.of(context).colorScheme.secondary,
+                    TextButton(
+                        onPressed: () => context.go('/register'),
+                        child: const Text(
+                          'Зарегистрироваться',
+                          style: TextStyle(fontSize: 24, color: Colors.white),
+                        ),
                       ),
-                      onPressed: () => context.go('/register'),
-                      child: const Text(
-                        'Зарегистрироваться',
-                        style: TextStyle(fontSize: 24, color: Colors.white),
-                      ),
-                    ),
                   ],
                 ),
               ),

@@ -32,7 +32,7 @@ class LightTheme {
             ),
           ), 
           buttonTheme: ButtonThemeData(
-            buttonColor: Color(0xffb3d6f9),
+            buttonColor: Color(0xff3684db),
             textTheme: ButtonTextTheme.primary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),

@@ -32,8 +32,8 @@ class DarkTheme {
             ),
           ), 
           buttonTheme: ButtonThemeData(
-            buttonColor: Color(0xff575669),
-            textTheme: ButtonTextTheme.primary,
+            buttonColor: Color(0xff3b3a4a),
+            textTheme: ButtonTextTheme.normal,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),

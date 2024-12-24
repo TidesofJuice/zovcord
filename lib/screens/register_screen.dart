@@ -27,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (!mounted) return;
       Navigator.pop(context);
       if (context.mounted) {
-        context.go('/home');
+        context.go('/chatlist');
       }
     } catch (e) {
       Navigator.pop(context);
@@ -80,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             const TextStyle(color: Colors.black, fontSize: 20),
                         minimumSize: const Size(400, 50),
                         backgroundColor:
-                            const Color.fromARGB(255, 211, 205, 255),
+                            Colors.white,
                         overlayColor: Colors.black,
                       ),
                       onPressed: () async {
@@ -89,16 +89,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           passwordController.text.trim(),
                         );
                       },
-                      child: const Text('Зарегистрироваться'),
-                    ),
-                    if (widget.callBack != null)
-                      TextButton(
-                        onPressed: widget.callBack,
-                        child: const Text(
-                          'Войти',
-                          style: TextStyle(fontSize: 24, color: Colors.white),
-                        ),
+                      child: const Text(
+                        'Зарегистрироваться',
+                        style: TextStyle(fontSize: 24, color: Colors.black),
                       ),
+                    ),
+                    TextButton(
+                      onPressed: () => context.go('/login'),
+                      child: const Text(
+                        'Войти',
+                        style: TextStyle(fontSize: 24, color: Colors.white),
+                      ),
+                    ),
                   ],
                 ),
               ),

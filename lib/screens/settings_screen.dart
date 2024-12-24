@@ -72,12 +72,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: const Text('Настройки'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/chat-list');
+            context.go('/chatlist');
           },
         ),
       ),
@@ -88,18 +88,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (user != null)
-                ListTile(
-                  title: const Text("Почта",),
-                  leading: IconTheme(
-                      data: Theme.of(context).iconTheme,
-                      child: Icon(Icons.mail)),
-                  subtitle: Text(user.email ?? "Ошибка"),
-                ),
               if (currentNickname != null)
                 ListTile(
-                  title: const Text("Текущий никнейм"),
-                  subtitle: Text(currentNickname!),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  tileColor: Theme.of(context).colorScheme.primary,
+                  title: Text("Текущий никнейм", style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),),
+                  subtitle: Text(currentNickname!, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),),
                 ),
               TextField(
                 controller: nicknameController,
@@ -112,6 +108,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onPressed: _updateNickname,
                       child: const Text('Обновить никнейм'),
                     ),
+              if (user != null)
+                ListTile(
+                  title: const Text(
+                    "Почта",
+                  ),
+                  leading: IconTheme(
+                      data: Theme.of(context).iconTheme,
+                      child: Icon(Icons.mail)),
+                  subtitle: Text(user.email ?? "Ошибка"),
+                ),
+              
               ListTile(
                 title: const Text("Темы"),
                 trailing: PopupMenuButton<int>(
@@ -148,7 +155,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onPressed: () async {
                     await authService.signOut();
                     if (context.mounted) {
-                      Navigator.of(context).pushReplacementNamed('/login');
+                      context.go('/login');
                     }
                   },
                 ),

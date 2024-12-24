@@ -44,7 +44,7 @@ final GoRouter router = GoRouter(
     final isGoingToLogin = state.uri.toString() == '/login';
 
     if (!isAuthenticated && !isGoingToLogin) {
-      return '/login';
+      return '/register';
     }
     return null;
   },
