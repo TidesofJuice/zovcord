@@ -1,13 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:zovcord/core/services/locator_service.dart';
+import 'package:zovcord/core/model/user_model.dart';
 import 'package:zovcord/core/services/auth_service.dart';
-import 'package:zovcord/core/services/chat_service.dart';
+import 'package:zovcord/core/repository/chat_repository.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:zovcord/core/widgets/chat_screen_widget.dart' as chat_widgets;
+import 'package:get_it/get_it.dart';
+import 'package:zovcord/core/logic/chat_controller.dart';
+import 'package:go_router/go_router.dart';
 
-final ChatService chatServices = locator.get();
+// Инициализация глобального локатора зависимостей
+final GetIt locator = GetIt.instance;
+
+// Получение сервисов аутентификации и репозитория чатов через локатор
 final AuthServices authService = locator.get();
+final ChatRepository chatRepository = locator.get();
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({
@@ -16,72 +22,107 @@ class ChatScreen extends StatefulWidget {
     required this.receiverId,
   }) : super(key: key);
 
-  final String receiverEmail;
-  final String receiverId;
+  final String receiverEmail; // Email получателя
+  final String receiverId; // ID получателя
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final controller = TextEditingController();
-  final ScrollController scrollController = ScrollController();
-  bool emojiShowing = false;
+  final controller =
+      TextEditingController(); // Контроллер текстового поля для ввода сообщений
+  final ScrollController scrollController =
+      ScrollController(); // Контроллер прокрутки для списка сообщений
+  late ChatController chatController; // Логика управления чатом
+  late Future<UserModel> receiver; // Будущий объект с данными о получателе
+  bool emojiShowing = false; // Флаг отображения панели эмодзи
+  bool isOnline = false; // Статус "в сети"
 
-  void scrollDown() {
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+  @override
+  void initState() {
+    super.initState();
+    // Инициализация контроллера чата
+    chatController = ChatController(controller, scrollController);
+    // Загрузка информации о получателе
+    receiver = chatRepository.getUserById(widget.receiverId);
+    // Проверка статуса пользователя
+    loadUserStatus();
   }
 
-  void sendMessage() async {
-    if (controller.text.isNotEmpty) {
-      await chatServices.sendMessage(widget.receiverId, controller.text);
-      controller.clear();
-      scrollDown();
-    }
-  }
-
-  void onEmojiSelected(Emoji emoji) {
-    controller.text += emoji.emoji;
-  }
-
-  void onBackspacePressed() {
-    controller.text = controller.text.characters.skipLast(1).toString();
-  }
-
-  void _handleKeyEvent(KeyEvent event) {
-    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
-      sendMessage();
-    }
+  // Загрузка статуса пользователя (в сети или нет)
+  Future<void> loadUserStatus() async {
+    isOnline = await chatRepository.getUserStatus(widget.receiverId);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        // Заголовок AppBar с использованием FutureBuilder для отображения данных о получателе
+        title: FutureBuilder<UserModel>(
+          future: receiver,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Отображение, пока данные загружаются
+              return const Text('Загрузка...');
+            } else if (snapshot.hasError) {
+              // Сообщение об ошибке, если данные не удалось загрузить
+              return const Text('Ошибка');
+            } else {
+              // Отображение никнейма или email, если данные успешно загружены
+              final displayName = snapshot.data?.nickname?.isNotEmpty == true
+                  ? snapshot.data?.nickname
+                  : widget.receiverEmail;
+              return Text(displayName ?? 'No Name');
+            }
+          },
+        ),
+        // Кнопка назад
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/chatlist'); // Переход к списку чатов
+          },
+        ),
+        actions: [
+          SizedBox(width: 10),
+          // Отображение статуса пользователя (Online/Offline)
+          // Text(
+            // isOnline ? "Online" : "Offline",
+            // style: TextStyle(
+                // fontSize: 16, color: isOnline ? Colors.green : Colors.red),
+          // ),
+        ],
       ),
       body: Center(
         child: Container(
-          width: 700,
+          // Основной контейнер для отображения чата
+          decoration: ShapeDecoration(
+            shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          width: 1000,
           height: 600,
           child: Column(
             children: [
+              // Список сообщений
               Expanded(
-                child: MessageList(
+                child: chat_widgets.MessageList(
                   receiverID: widget.receiverId,
                   controller: scrollController,
                 ),
               ),
+              // Поле ввода сообщения с клавиатурным обработчиком
               KeyboardListener(
                 focusNode: FocusNode(),
                 autofocus: false,
-                onKeyEvent: _handleKeyEvent,
+                onKeyEvent: (event) =>
+                    chatController.onKey(event, widget.receiverId),
                 child: Row(
                   children: [
+                    SizedBox(width: 10),
+                    // Поле ввода текста
                     Expanded(
                       child: TextField(
                         controller: controller,
@@ -89,14 +130,17 @@ class _ChatScreenState extends State<ChatScreen> {
                             hintText: "Введите сообщение"),
                       ),
                     ),
+                    // Кнопка отправки сообщения
                     IconButton(
-                      onPressed: sendMessage,
+                      onPressed: () =>
+                          chatController.sendMessage(widget.receiverId),
                       icon: const Icon(Icons.send),
                     ),
+                    // Кнопка отображения панели эмодзи
                     IconButton(
                       onPressed: () {
                         setState(() {
-                          emojiShowing = !emojiShowing;
+                          chatController.toggleEmojiShowing();
                         });
                       },
                       icon: const Icon(Icons.emoji_emotions),
@@ -104,78 +148,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   ],
                 ),
               ),
+              // Панель эмодзи, скрывается, если emojiShowing == false
               Offstage(
-                offstage: !emojiShowing,
+                offstage: !chatController.emojiShowing,
                 child: SizedBox(
                   height: 250,
                   child: EmojiPicker(
+                    // Выбор эмодзи
                     onEmojiSelected: (category, emoji) {
-                      onEmojiSelected(emoji);
+                      chatController.onEmojiSelected(emoji);
                     },
-                    onBackspacePressed: onBackspacePressed,
+                    // Обработка нажатия клавиши удаления
+                    onBackspacePressed: chatController.onBackspacePressed,
                   ),
                 ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class MessageList extends StatelessWidget {
-  const MessageList({
-    Key? key,
-    required this.receiverID,
-    required this.controller,
-  }) : super(key: key);
-
-  final String receiverID;
-  final ScrollController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    String senderID = authService.getCurrentUser()!.uid;
-    return StreamBuilder(
-      stream: chatServices.getMessage(receiverID, senderID),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Center(child: Text("Ошибка загрузки сообщений"));
-        }
-        if (!snapshot.hasData ||
-            snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: Text("ЗАГРУЗКА..."));
-        }
-        return ListView(
-          controller: controller,
-          children:
-              snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
-        );
-      },
-    );
-  }
-
-  Widget _buildMessageItem(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    bool isCurrentUser = data['senderId'] == authService.getCurrentUser()!.uid;
-    return Align(
-      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment:
-              isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Text(
-              data['senderEmail'],
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-            Text(
-              data["message"],
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
         ),
       ),
     );
