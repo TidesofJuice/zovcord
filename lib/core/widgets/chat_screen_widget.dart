@@ -95,38 +95,45 @@ class MessageItem extends StatelessWidget {
               isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: isCurrentUser
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                // Отображение никнейма отправителя
-                FutureBuilder<UserModel>(
-                  future: chatRepository.getUserById(data['senderId']),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Text('Загрузка...');
-                    } else if (snapshot.hasError) {
-                      return const Text('Ошибка');
-                    } else {
-                      return Text(
-                        snapshot.data!.nickname ?? 'Unknown',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      );
-                    }
-                  },
-                ),
-                // Текст сообщения
-                Text(
-                  data["message"],
-                  style: TextStyle(fontSize: 16),
-                ),
-                // Время отправки
-                Text(
-                  formattedTimestamp,
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              decoration: ShapeDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15))),
+              child: Column(
+                crossAxisAlignment: isCurrentUser
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+                children: [
+                  // Отображение никнейма отправителя
+                  FutureBuilder<UserModel>(
+                    future: chatRepository.getUserById(data['senderId']),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text('Загрузка...');
+                      } else if (snapshot.hasError) {
+                        return const Text('Ошибка');
+                      } else {
+                        return Text(
+                          snapshot.data!.nickname ?? 'Unknown',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        );
+                      }
+                    },
+                  ),
+                  // Текст сообщения
+                  Text(
+                    data["message"],
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  // Время отправки
+                  Text(
+                    formattedTimestamp,
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

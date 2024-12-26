@@ -47,11 +47,11 @@ class _ChatScreenState extends State<ChatScreen> {
     // Загрузка информации о получателе
     receiver = chatRepository.getUserById(widget.receiverId);
     // Проверка статуса пользователя
-    _loadUserStatus();
+    loadUserStatus();
   }
 
   // Загрузка статуса пользователя (в сети или нет)
-  Future<void> _loadUserStatus() async {
+  Future<void> loadUserStatus() async {
     isOnline = await chatRepository.getUserStatus(widget.receiverId);
     setState(() {});
   }
@@ -89,11 +89,11 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           SizedBox(width: 10),
           // Отображение статуса пользователя (Online/Offline)
-          Text(
-            isOnline ? "Online" : "Offline",
-            style: TextStyle(
-                fontSize: 16, color: isOnline ? Colors.green : Colors.red),
-          ),
+          // Text(
+            // isOnline ? "Online" : "Offline",
+            // style: TextStyle(
+                // fontSize: 16, color: isOnline ? Colors.green : Colors.red),
+          // ),
         ],
       ),
       body: Center(
