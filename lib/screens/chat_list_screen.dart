@@ -20,12 +20,19 @@ class ChatListScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: Theme.of(context).appBarTheme.iconTheme,
         title: Text("Список чатов",
-            style: Theme.of(context).appBarTheme.titleTextStyle), 
+            style: Theme.of(context).appBarTheme.titleTextStyle),
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.settings,
-            ),
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: UserSearchDelegate(),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
             onPressed: () {
               context.go('/settings');
             },
@@ -37,13 +44,70 @@ class ChatListScreen extends StatelessWidget {
         child: const UserList(),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Действие при нажатии на кнопку
-        },
+        onPressed: () {},
         child: Icon(Icons.edit),
         tooltip: 'Создать чат',
       ),
     );
+  }
+}
+
+class UserSearchDelegate extends SearchDelegate<String> {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return StreamBuilder<List<UserModel>>(
+      stream: _chatRepository.searchUsers(query),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Ошибка: ${snapshot.error}'));
+        }
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final users = snapshot.data!;
+        return ListView.builder(
+          itemCount: users.length,
+          itemBuilder: (context, index) {
+            final user = users[index];
+            return ListTile(
+              title: Text(user.nickname ?? user.email),
+              subtitle: Text(user.email),
+              onTap: () {
+                final encodedEmail = Uri.encodeComponent(user.email);
+                context.go('/chat-with/$encodedEmail/${user.id}');
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return buildResults(context);
   }
 }
 

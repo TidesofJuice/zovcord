@@ -13,6 +13,20 @@ class ChatRepository {
   // Конструктор класса
   ChatRepository(this._firestore, this._auth);
 
+  // Поиск
+  Stream<List<UserModel>> searchUsers(String query) {
+    if (query.isEmpty) return Stream.value([]);
+
+    return _firestore
+        .collection('Users')
+        .where('email', isGreaterThanOrEqualTo: query)
+        .where('email', isLessThan: query + 'z')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
+    });
+  }
+
   // Получение потока данных пользователей с их последними сообщениями
   Stream<List<UserModel>> getUserStreamWithLastMessage() {
     final currentUserId = _auth.currentUser?.uid;
