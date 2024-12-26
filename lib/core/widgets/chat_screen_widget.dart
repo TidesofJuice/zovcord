@@ -73,18 +73,17 @@ class MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Получение данных сообщения
+
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     bool isCurrentUser = data['senderId'] == authService.getCurrentUser()!.uid;
 
-    // Форматирование времени отправки
+ 
     String formattedTimestamp = _formatTimestamp(data['timestamp']);
 
-    // Проверка необходимости отображения заголовка с датой
     bool showDateHeader = previousTimestamp == null ||
         !_isSameDay(data['timestamp'], previousTimestamp!);
 
-    // Построение UI сообщения
+
     return Column(
       crossAxisAlignment:
           isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -106,7 +105,7 @@ class MessageItem extends StatelessWidget {
                     ? CrossAxisAlignment.end
                     : CrossAxisAlignment.start,
                 children: [
-                  // Отображение никнейма отправителя
+
                   FutureBuilder<UserModel>(
                     future: chatRepository.getUserById(data['senderId']),
                     builder: (context, snapshot) {
@@ -117,20 +116,20 @@ class MessageItem extends StatelessWidget {
                       } else {
                         return Text(
                           snapshot.data!.nickname ?? 'Unknown',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
                         );
                       }
                     },
                   ),
-                  // Текст сообщения
+                  const SizedBox(height: 5),
                   Text(
                     data["message"],
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onPrimary),
                   ),
-                  // Время отправки
+                  const SizedBox(height: 5),
                   Text(
                     formattedTimestamp,
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ],
               ),

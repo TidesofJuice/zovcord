@@ -23,6 +23,7 @@ class DarkTheme {
           color: Colors.white,
           fontSize: 24,
           fontWeight: FontWeight.w600,
+          fontFamily: 'Afacad Flux',
         ),
         iconTheme:
             IconThemeData(color: Color(0xfff5f9f8), applyTextScaling: true),

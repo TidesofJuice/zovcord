@@ -17,26 +17,31 @@ class ChatListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Настройка панели приложения с заголовком и кнопкой перехода в настройки
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: Theme.of(context).appBarTheme.iconTheme,
         title: Text("Список чатов",
-            style: Theme.of(context).appBarTheme.titleTextStyle),
+            style: Theme.of(context).appBarTheme.titleTextStyle), 
         actions: [
           IconButton(
             icon: const Icon(
               Icons.settings,
             ),
             onPressed: () {
-              context.go('/settings'); // Переход к экрану настроек
+              context.go('/settings');
             },
           ),
         ],
       ),
       body: Container(
-        // Основное содержимое экрана, отображает список пользователей
         color: Theme.of(context).colorScheme.surface,
         child: const UserList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Действие при нажатии на кнопку
+        },
+        child: Icon(Icons.edit),
+        tooltip: 'Создать чат',
       ),
     );
   }
@@ -48,53 +53,44 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        // Настройка контейнера для списка пользователей
-        decoration: ShapeDecoration(
-            shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
-        width: 1000,
-        height: 700,
-        child: StreamBuilder<List<UserModel>>(
-          // Подключение к потоку данных пользователей с последними сообщениями
-          stream: _chatRepository.getUserStreamWithLastMessage(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Отображение индикатора загрузки, если данные еще не пришли
-              return const Center(child: CircularProgressIndicator());
-            }
+      child: StreamBuilder<List<UserModel>>(
+        stream: _chatRepository.getUserStreamWithLastMessage(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            if (snapshot.hasError) {
-              // Обработка ошибок при загрузке данных
-              print('Ошибка: ${snapshot.error}');
-              return Center(child: Text('Ошибка загрузки: ${snapshot.error}'));
-            }
+          if (snapshot.hasError) {
+            print('Ошибка: ${snapshot.error}');
+            return Center(child: Text('Ошибка загрузки: ${snapshot.error}'));
+          }
 
-            final users = snapshot.data ?? []; // Получение списка пользователей
+          final users = snapshot.data ?? [];
 
-            if (users.isEmpty) {
-              // Сообщение о том, что пользователи отсутствуют
-              return const Center(child: Text('Нет доступных пользователей'));
-            }
+          if (users.isEmpty) {
+            return const Center(child: Text('Нет доступных пользователей'));
+          }
 
-            return ListView.builder(
-              // Построение списка пользователей
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                final user = users[index];
+          return ListView.separated(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
 
-                return UserTile(
-                  // Отображение данных отдельного пользователя
-                  email: user.email,
-                  userId: user.id,
-                  isOnline: user.isOnline,
-                  nickname: user.nickname,
-                  lastMessage: user.lastMessage,
-                  lastMessageTime: user.lastMessageTime,
-                );
-              },
-            );
-          },
-        ),
+              return UserTile(
+                email: user.email,
+                userId: user.id,
+                isOnline: user.isOnline,
+                nickname: user.nickname,
+                lastMessage: user.lastMessage,
+                lastMessageTime: user.lastMessageTime,
+              );
+            },
+            separatorBuilder: (context, index) => Divider(
+              color: Theme.of(context).colorScheme.primary,
+              thickness: 1,
+            ),
+          );
+        },
       ),
     );
   }
@@ -121,7 +117,6 @@ class UserTile extends StatelessWidget {
   final String? lastMessageSender; // Отправитель последнего сообщения
 
   String _formatTimestamp(Timestamp? timestamp) {
-    // Форматирование метки времени в строку
     if (timestamp == null) return '';
     final date = timestamp.toDate();
     final now = DateTime.now();
@@ -133,31 +128,68 @@ class UserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = _authServices.getCurrentUser(); // Текущий пользователь
+    final currentUser = _authServices.getCurrentUser();
     final displayName = nickname?.isNotEmpty == true ? nickname! : email;
 
     if (currentUser != null && email != currentUser.email) {
       return ListTile(
-        // Элемент списка для отдельного пользователя
         shape:
             ContinuousRectangleBorder(borderRadius: BorderRadius.circular(24)),
         hoverColor: Theme.of(context).colorScheme.tertiary,
         textColor: Theme.of(context).colorScheme.onSecondary,
         leading: IconTheme(
           data: Theme.of(context).iconTheme,
-          child: const Icon(Icons.person), // Иконка пользователя
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            child: Stack(
+              children: [
+                Icon(Icons.person),
+                if (isOnline)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                if (!isOnline)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
-        title: Text(displayName), // Имя пользователя
+        title: Text(
+          (displayName),
+          style: TextStyle(
+            fontWeight: FontWeight.w900,
+            fontFamily: 'Afacad Flux',
+          ),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              isOnline ? "Online" : "Offline", // Статус онлайн/офлайн
-              style: TextStyle(color: isOnline ? Colors.green : Colors.red),
-            ),
             if (lastMessage != null || lastMessageTime != null)
               Row(
-                // Отображение последнего сообщения и времени его отправки
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
@@ -166,20 +198,29 @@ class UserTile extends StatelessWidget {
                       children: [
                         if (lastMessageSender != null)
                           Text(
-                            'From: $lastMessageSender', // Отправитель сообщения
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            'From: $lastMessageSender',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondary
+                                    .withOpacity(0.6)),
                           ),
                         Text(
-                          lastMessage ?? '', // Последнее сообщение
-                          style: TextStyle(fontSize: 12),
+                          lastMessage ?? '',
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondary
+                                  .withOpacity(0.6)),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
                   Text(
-                    _formatTimestamp(
-                        lastMessageTime), // Время последнего сообщения
+                    _formatTimestamp(lastMessageTime),
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context)
@@ -193,13 +234,11 @@ class UserTile extends StatelessWidget {
           ],
         ),
         onTap: () {
-          // Действие при нажатии на пользователя
           final encodedEmail = Uri.encodeComponent(email);
           context.go('/chat-with/$encodedEmail/$userId');
         },
       );
     }
-    return const SizedBox
-        .shrink(); // Пустое место, если пользователь совпадает с текущим
+    return const SizedBox.shrink();
   }
 }

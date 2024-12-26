@@ -8,10 +8,10 @@ import 'package:get_it/get_it.dart';
 import 'package:zovcord/core/logic/chat_controller.dart';
 import 'package:go_router/go_router.dart';
 
-// Инициализация глобального локатора зависимостей
+
 final GetIt locator = GetIt.instance;
 
-// Получение сервисов аутентификации и репозитория чатов через локатор
+
 final AuthServices authService = locator.get();
 final ChatRepository chatRepository = locator.get();
 
@@ -42,15 +42,14 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // Инициализация контроллера чата
+
     chatController = ChatController(controller, scrollController);
-    // Загрузка информации о получателе
+
     receiver = chatRepository.getUserById(widget.receiverId);
-    // Проверка статуса пользователя
+
     loadUserStatus();
   }
 
-  // Загрузка статуса пользователя (в сети или нет)
   Future<void> loadUserStatus() async {
     isOnline = await chatRepository.getUserStatus(widget.receiverId);
     setState(() {});
@@ -60,18 +59,18 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Заголовок AppBar с использованием FutureBuilder для отображения данных о получателе
+        
         title: FutureBuilder<UserModel>(
           future: receiver,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              // Отображение, пока данные загружаются
+
               return const Text('Загрузка...');
             } else if (snapshot.hasError) {
-              // Сообщение об ошибке, если данные не удалось загрузить
+
               return const Text('Ошибка');
             } else {
-              // Отображение никнейма или email, если данные успешно загружены
+
               final displayName = snapshot.data?.nickname?.isNotEmpty == true
                   ? snapshot.data?.nickname
                   : widget.receiverEmail;
@@ -79,41 +78,31 @@ class _ChatScreenState extends State<ChatScreen> {
             }
           },
         ),
-        // Кнопка назад
+
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/chatlist'); // Переход к списку чатов
+            context.go('/chatlist'); 
           },
         ),
-        actions: [
-          SizedBox(width: 10),
-          // Отображение статуса пользователя (Online/Offline)
-          // Text(
-            // isOnline ? "Online" : "Offline",
-            // style: TextStyle(
-                // fontSize: 16, color: isOnline ? Colors.green : Colors.red),
-          // ),
-        ],
       ),
       body: Center(
         child: Container(
-          // Основной контейнер для отображения чата
-          decoration: ShapeDecoration(
-            shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          ),
+
+          
+          padding: const EdgeInsets.all(10),
           width: 1000,
           height: 600,
           child: Column(
             children: [
-              // Список сообщений
+
               Expanded(
                 child: chat_widgets.MessageList(
                   receiverID: widget.receiverId,
                   controller: scrollController,
                 ),
               ),
-              // Поле ввода сообщения с клавиатурным обработчиком
+     
               KeyboardListener(
                 focusNode: FocusNode(),
                 autofocus: false,
@@ -122,7 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Row(
                   children: [
                     SizedBox(width: 10),
-                    // Поле ввода текста
+
                     Expanded(
                       child: TextField(
                         controller: controller,
@@ -130,13 +119,13 @@ class _ChatScreenState extends State<ChatScreen> {
                             hintText: "Введите сообщение"),
                       ),
                     ),
-                    // Кнопка отправки сообщения
+
                     IconButton(
                       onPressed: () =>
                           chatController.sendMessage(widget.receiverId),
                       icon: const Icon(Icons.send),
                     ),
-                    // Кнопка отображения панели эмодзи
+
                     IconButton(
                       onPressed: () {
                         setState(() {
@@ -148,17 +137,17 @@ class _ChatScreenState extends State<ChatScreen> {
                   ],
                 ),
               ),
-              // Панель эмодзи, скрывается, если emojiShowing == false
+
               Offstage(
                 offstage: !chatController.emojiShowing,
                 child: SizedBox(
                   height: 250,
                   child: EmojiPicker(
-                    // Выбор эмодзи
+
                     onEmojiSelected: (category, emoji) {
                       chatController.onEmojiSelected(emoji);
                     },
-                    // Обработка нажатия клавиши удаления
+
                     onBackspacePressed: chatController.onBackspacePressed,
                   ),
                 ),
