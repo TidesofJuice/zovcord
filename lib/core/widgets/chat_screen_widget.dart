@@ -24,7 +24,7 @@ class MessageList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Получение ID текущего пользователя
-    String senderID = authService.getCurrentUser()!.uid;
+    String senderID = authService.currentUser!.uid;
 
     // Создание потока данных сообщений
     return StreamBuilder<QuerySnapshot>(
@@ -74,7 +74,7 @@ class MessageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    bool isCurrentUser = data['senderId'] == authService.getCurrentUser()!.uid;
+    bool isCurrentUser = data['senderId'] == authService.currentUser!.uid;
 
     String formattedTimestamp = _formatTimestamp(data['timestamp']);
 

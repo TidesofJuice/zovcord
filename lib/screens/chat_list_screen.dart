@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:zovcord/core/services/locator_service.dart';
 import 'package:zovcord/core/services/auth_service.dart';
 import 'package:zovcord/core/repository/chat_repository.dart';
+import 'package:zovcord/core/model/group_chat_model.dart';
 import 'package:zovcord/core/model/user_model.dart';
 
 final AuthServices _authServices = locator.get();
@@ -15,38 +16,47 @@ class ChatListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = _authServices.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        iconTheme: Theme.of(context).appBarTheme.iconTheme,
-        title: Text("Список чатов",
-            style: Theme.of(context).appBarTheme.titleTextStyle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: UserSearchDelegate(),
+        title: const Text('Чаты'),
+      ),
+      body: StreamBuilder<List<GroupChatModel>>(
+        stream: _chatRepository.getChats(currentUser!.uid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Ошибка: ${snapshot.error}'));
+          }
+
+          final chats = snapshot.data ?? [];
+
+          return ListView.builder(
+            itemCount: chats.length,
+            itemBuilder: (context, index) {
+              final chat = chats[index];
+              return ListTile(
+                title: Text(chat.name),
+                subtitle: Text(chat.lastMessage ?? 'Нет сообщений'),
+                onTap: () {
+                  context.push('/chat/${chat.chatId}');
+                },
               );
             },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              context.go('/settings');
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        color: Theme.of(context).colorScheme.surface,
-        child: const UserList(),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.edit),
-        tooltip: 'Создать чат',
+        onPressed: () {
+          context.push('/creategroupchat');
+        },
+        child: const Icon(Icons.group_add),
+        tooltip: 'Создать групповой чат',
       ),
     );
   }
@@ -192,7 +202,7 @@ class UserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = _authServices.getCurrentUser();
+    final currentUser = _authServices.currentUser;
     final displayName = nickname?.isNotEmpty == true ? nickname! : email;
 
     if (currentUser != null && email != currentUser.email) {

@@ -6,6 +6,7 @@ import 'package:zovcord/screens/register_screen.dart';
 import 'package:zovcord/screens/settings_screen.dart';
 import 'package:zovcord/screens/chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:zovcord/screens/create_group_chat_screen.dart';
 
 // Создание и настройка маршрутизатора приложения
 final GoRouter router = GoRouter(
@@ -38,6 +39,10 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const SettingsScreen(),
     ),
 
+    GoRoute(
+      path: '/creategroupchat',
+      builder: (context, state) => const CreateGroupChatScreen(),
+    ),
     // Маршрут к конкретному чату с параметрами email и userId
     GoRoute(
       path: '/chat-with/:email/:userId',

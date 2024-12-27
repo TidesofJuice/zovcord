@@ -28,6 +28,5 @@ Future<void> initServiceLocator() async {
 
   // Регистрация репозитория чатов как синглтон
   // Передаем зависимости FirebaseFirestore и FirebaseAuth через Get_it
-  locator.registerSingleton<ChatRepository>(
-      ChatRepository(locator.get(), locator.get()));
+  locator.registerSingleton<ChatRepository>(ChatRepository());
 }

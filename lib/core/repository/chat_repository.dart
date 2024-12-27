@@ -1,17 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:zovcord/core/model/message_model.dart';
-import 'package:zovcord/core/model/chat_model.dart';
 import 'package:zovcord/core/model/user_model.dart';
+import 'package:zovcord/core/model/group_chat_model.dart';
 
 // Класс репозитория для управления чатами и сообщениями
 class ChatRepository {
   // Инициализация экземпляров Firebase
-  final FirebaseFirestore _firestore;
-  final FirebaseAuth _auth;
-
-  // Конструктор класса
-  ChatRepository(this._firestore, this._auth);
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Поиск
   Stream<List<UserModel>> searchUsers(String query) {
@@ -167,22 +164,16 @@ class ChatRepository {
     }, SetOptions(merge: true));
   }
 
-  // Получение списка чатов пользователя
-  Stream<List<ChatModel>> getChatList(String userId) {
+  // Обновите метод getChatList
+  Stream<List<GroupChatModel>> getChatList(String userId) {
     return _firestore
         .collection('chats')
         .where('members', arrayContains: userId)
-        .orderBy('lastMessageTime', descending: true)
+        .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        final data = doc.data();
-        return ChatModel.fromMap({
-          'id': doc.id,
-          'members': data['members'],
-          'lastMessage': data['lastMessage'],
-          'lastMessageTime': data['lastMessageTime'],
-        });
+        return GroupChatModel.fromMap(doc.data());
       }).toList();
     });
   }
@@ -201,5 +192,35 @@ class ChatRepository {
   String _getChatId(String senderID, String receiverID) {
     final ids = [senderID, receiverID]..sort();
     return ids.join('_');
+  }
+
+  Future<void> createGroupChat(String chatName, List<UserModel> users) async {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) return;
+
+    final chatId = _firestore.collection('group_chats').doc().id;
+    final memberIds = users.map((user) => user.id).toList()..add(currentUser.uid);
+
+    final groupChat = GroupChatModel(
+      chatId: chatId,
+      members: memberIds,
+      createdAt: Timestamp.now(),
+      name: chatName,
+    );
+
+    await _firestore.collection('group_chats').doc(chatId).set(groupChat.toMap());
+  }
+
+  Stream<List<GroupChatModel>> getChats(String userId) {
+    return _firestore
+        .collection('group_chats')
+        .where('members', arrayContains: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return GroupChatModel.fromMap(doc.data());
+      }).toList();
+    });
   }
 }
