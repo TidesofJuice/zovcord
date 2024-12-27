@@ -18,76 +18,65 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-
   final TextEditingController nicknameController = TextEditingController();
-  String? currentNickname; 
-  bool _isLoading = false; 
+  String? currentNickname;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadCurrentNickname(); 
+    _loadCurrentNickname();
   }
 
-
   Future<void> _loadCurrentNickname() async {
-    final user = authService.getCurrentUser(); 
+    final user = authService.getCurrentUser();
     if (user != null) {
-
       final nickname = await chatRepository.getCurrentNickname(user.uid);
       setState(() {
         currentNickname = nickname;
-        nicknameController.text =
-            nickname ?? '';
+        nicknameController.text = nickname ?? '';
       });
     }
   }
-
 
   Future<void> _updateNickname() async {
     setState(() {
       _isLoading = true;
     });
     try {
-
       await chatRepository.updateNickname(
         authService.getCurrentUser()!.uid,
         nicknameController.text,
       );
-    
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Никнейм обновлен')),
       );
       setState(() {
-        currentNickname =
-            nicknameController.text; 
+        currentNickname = nicknameController.text;
       });
     } catch (e) {
-      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ошибка обновления никнейма: $e')),
       );
     } finally {
       setState(() {
-        _isLoading = false; 
+        _isLoading = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider =
-        Provider.of<ThemeProvider>(context); 
-    final user = authService.getCurrentUser(); 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final user = authService.getCurrentUser();
 
     return Scaffold(
       appBar: AppBar(
-      
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: const Text('Настройки'),
         leading: IconButton(
-      
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             context.go('/chatlist');
@@ -95,19 +84,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       body: Center(
-
         child: Container(
           width: 300,
           height: 400,
           child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center, 
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (currentNickname != null)
-           
                 ListTile(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15), 
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   tileColor: Theme.of(context).colorScheme.primary,
                   title: Text(
@@ -121,26 +107,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
-                SizedBox(height: 20),
- 
+              SizedBox(height: 20),
               TextField(
                 controller: nicknameController,
                 decoration: const InputDecoration(labelText: 'Никнейм'),
               ),
-              const SizedBox(height: 20), 
+              const SizedBox(height: 20),
               _isLoading
-
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
+                      ),
                       onPressed: _updateNickname,
                       child: const Text('Обновить никнейм'),
                     ),
               if (user != null)
-
                 ListTile(
                   title: const Text("Почта"),
                   leading: IconTheme(
@@ -148,12 +132,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Icon(Icons.mail)),
                   subtitle: Text(user.email ?? "Ошибка"),
                 ),
-
               ListTile(
                 title: const Text("Темы"),
                 trailing: PopupMenuButton<int>(
                   onSelected: (value) {
-                    themeProvider.toggleTheme(value); 
+                    themeProvider.toggleTheme(value);
                   },
                   itemBuilder: (context) => [
                     PopupMenuItem(
@@ -177,7 +160,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   tooltip: "Выбор темы",
                 ),
               ),
-
               ListTile(
                 iconColor: Theme.of(context).iconTheme.color,
                 title: const Text("Выйти"),
@@ -186,7 +168,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onPressed: () async {
                     await authService.signOut();
                     if (context.mounted) {
-                      context.go('/login'); 
+                      context.go('/login');
                     }
                   },
                 ),
