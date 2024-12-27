@@ -268,7 +268,7 @@ class UserTile extends StatelessWidget {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSecondary
-                                    .withValues(alpha: 0.6)),
+                                    .withOpacity(0.6)),
                           ),
                         Text(
                           lastMessage ?? '',
@@ -277,7 +277,7 @@ class UserTile extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSecondary
-                                  .withValues(alpha: 0.6)),
+                                  .withOpacity(0.6)),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
@@ -290,7 +290,7 @@ class UserTile extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSecondary
-                          .withValues(alpha: 0.6),
+                          .withOpacity(0.6),
                     ),
                   ),
                 ],
