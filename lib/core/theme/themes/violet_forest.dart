@@ -38,6 +38,9 @@ class VioletForest {
         color: Color(0xffedd1d2),
         size: 24,
       ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: Colors.white,
+      ),
     );
   }
 }

@@ -50,7 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Никнейм обновлен')),
+         SnackBar(content: Text('Никнейм обновлен, текущий никнейм - $currentNickname')),
       );
       setState(() {
         currentNickname = nicknameController.text;
@@ -88,10 +88,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           width: 300,
           height: 400,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               if (currentNickname != null)
-                ListTile(
+                /*ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -99,6 +99,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: Text(
                     "Текущий никнейм",
                     style: TextStyle(
+                      fontSize: 12,
                         color: Theme.of(context).colorScheme.onPrimary),
                   ),
                   subtitle: Text(
@@ -106,11 +107,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary),
                   ),
-                ),
+                ),*/
               SizedBox(height: 20),
               TextField(
                 controller: nicknameController,
-                decoration: const InputDecoration(labelText: 'Никнейм'),
+                decoration: const InputDecoration(
+                  labelText: 'Никнейм',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               _isLoading
@@ -125,52 +133,61 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: const Text('Обновить никнейм'),
                     ),
               if (user != null)
-                ListTile(
-                  title: const Text("Почта"),
-                  leading: IconTheme(
-                      data: Theme.of(context).iconTheme,
-                      child: Icon(Icons.mail)),
-                  subtitle: Text(user.email ?? "Ошибка"),
+                Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    title: const Text("Почта"),
+                    leading: IconTheme(
+                        data: Theme.of(context).iconTheme,
+                        child: Icon(Icons.mail)),
+                    subtitle: Text(user.email ?? "Ошибка"),
+                  ),
                 ),
-              ListTile(
-                title: const Text("Темы"),
-                trailing: PopupMenuButton<int>(
-                  onSelected: (value) {
-                    themeProvider.toggleTheme(value);
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      child: const Text('Light theme'),
-                      value: 1,
-                    ),
-                    PopupMenuItem(
-                      child: const Text('Dark theme'),
-                      value: 2,
-                    ),
-                    PopupMenuItem(
-                      child: const Text('Violet theme'),
-                      value: 3,
-                    ),
-                    PopupMenuItem(
-                      child: const Text('Pink theme'),
-                      value: 4,
-                    ),
-                  ],
-                  icon: Icon(Icons.brush),
-                  tooltip: "Выбор темы",
+              Card(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ListTile(
+                  title: const Text("Темы"),
+                  trailing: PopupMenuButton<int>(
+                    onSelected: (value) {
+                      themeProvider.toggleTheme(value);
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: const Text('Light theme'),
+                        value: 1,
+                      ),
+                      PopupMenuItem(
+                        child: const Text('Dark theme'),
+                        value: 2,
+                      ),
+                      PopupMenuItem(
+                        child: const Text('Violet theme'),
+                        value: 3,
+                      ),
+                      PopupMenuItem(
+                        child: const Text('Pink theme'),
+                        value: 4,
+                      ),
+                    ],
+                    icon: Icon(Icons.brush),
+                    tooltip: "Выбор темы",
+                  ),
                 ),
               ),
-              ListTile(
-                iconColor: Theme.of(context).iconTheme.color,
-                title: const Text("Выйти"),
-                trailing: IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () async {
-                    await authService.signOut();
-                    if (context.mounted) {
-                      context.go('/login');
-                    }
-                  },
+              Card(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ListTile(
+                  iconColor: Theme.of(context).iconTheme.color,
+                  title: const Text("Выйти"),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.logout),
+                    onPressed: () async {
+                      await authService.signOut();
+                      if (context.mounted) {
+                        context.go('/login');
+                      }
+                    },
+                  ),
                 ),
               ),
             ],
@@ -180,3 +197,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
+

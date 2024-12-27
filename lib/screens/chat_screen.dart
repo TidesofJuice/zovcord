@@ -83,7 +83,7 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Container(
           padding: const EdgeInsets.all(10),
           width: 1000,
-          height: 600,
+          height: double.infinity,
           child: Column(
             children: [
               Expanded(
@@ -101,10 +101,16 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     SizedBox(width: 10),
                     Expanded(
-                      child: TextField(
-                        controller: controller,
-                        decoration: const InputDecoration(
-                            hintText: "Введите сообщение"),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          controller: controller,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10))
+                            ),
+                              hintText: "Введите сообщение"),
+                        ),
                       ),
                     ),
                     IconButton(

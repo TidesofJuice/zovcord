@@ -37,6 +37,9 @@ class PinkTheme {
         color: Color(0xffd35c9c),
         size: 24,
       ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: Colors.white,
+      ),
     );
   }
 }

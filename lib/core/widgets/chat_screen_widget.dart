@@ -119,14 +119,14 @@ class MessageItem extends StatelessWidget {
                       }
                     },
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 2),
                   Text(
                     data["message"],
                     style: TextStyle(
                         fontSize: 20,
                         color: Theme.of(context).colorScheme.onPrimary),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 2),
                   Text(
                     formattedTimestamp,
                     style: TextStyle(

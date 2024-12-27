@@ -37,6 +37,9 @@ class LightTheme {
         color: Color(0xff3684db),
         size: 24,
       ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: Colors.white,
+      ),
     );
   }
 }

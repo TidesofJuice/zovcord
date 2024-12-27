@@ -43,20 +43,36 @@ class ChatListScreen extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         child: const UserList(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.edit),
-        tooltip: 'Создать чат',
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {},
+      //   child: Icon(Icons.edit),
+      //   tooltip: 'Создать чат',
+      // ),
     );
   }
 }
 
 class UserSearchDelegate extends SearchDelegate<String> {
   @override
+  ThemeData appBarTheme(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return theme.copyWith(
+      appBarTheme: AppBarTheme(
+        backgroundColor: theme.colorScheme.primary,
+        iconTheme: theme.iconTheme,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(color: theme.colorScheme.onPrimary),
+        border: InputBorder.none,
+      ),
+    );
+  }
+
+  @override
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
+        color: Theme.of(context).colorScheme.onPrimary,
         icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
@@ -68,6 +84,7 @@ class UserSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
+      color: Theme.of(context).colorScheme.onPrimary,
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
         close(context, '');
@@ -87,7 +104,7 @@ class UserSearchDelegate extends SearchDelegate<String> {
           return const Center(child: CircularProgressIndicator());
         }
         final users = snapshot.data!;
-        return ListView.builder(
+        return ListView.separated(
           itemCount: users.length,
           itemBuilder: (context, index) {
             final user = users[index];
@@ -100,6 +117,10 @@ class UserSearchDelegate extends SearchDelegate<String> {
               },
             );
           },
+          separatorBuilder: (context, index) => Divider(
+            color: Theme.of(context).colorScheme.primary,
+            thickness: 1,
+          ),
         );
       },
     );

@@ -39,6 +39,11 @@ class DarkTheme {
         color: Color(0xffa1a2ab),
         size: 24,
       ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: Colors.white,
+        
+      ),
+      
     );
   }
 }
