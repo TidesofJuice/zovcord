@@ -8,9 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:zovcord/core/logic/chat_controller.dart';
 import 'package:go_router/go_router.dart';
 
-
 final GetIt locator = GetIt.instance;
-
 
 final AuthServices authService = locator.get();
 final ChatRepository chatRepository = locator.get();
@@ -59,18 +57,14 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
         title: FutureBuilder<UserModel>(
           future: receiver,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-
               return const Text('Загрузка...');
             } else if (snapshot.hasError) {
-
               return const Text('Ошибка');
             } else {
-
               final displayName = snapshot.data?.nickname?.isNotEmpty == true
                   ? snapshot.data?.nickname
                   : widget.receiverEmail;
@@ -78,31 +72,26 @@ class _ChatScreenState extends State<ChatScreen> {
             }
           },
         ),
-
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/chatlist'); 
+            context.go('/chatlist');
           },
         ),
       ),
       body: Center(
         child: Container(
-
-          
           padding: const EdgeInsets.all(10),
           width: 1000,
           height: 600,
           child: Column(
             children: [
-
               Expanded(
                 child: chat_widgets.MessageList(
                   receiverID: widget.receiverId,
                   controller: scrollController,
                 ),
               ),
-     
               KeyboardListener(
                 focusNode: FocusNode(),
                 autofocus: false,
@@ -111,7 +100,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Row(
                   children: [
                     SizedBox(width: 10),
-
                     Expanded(
                       child: TextField(
                         controller: controller,
@@ -119,13 +107,11 @@ class _ChatScreenState extends State<ChatScreen> {
                             hintText: "Введите сообщение"),
                       ),
                     ),
-
                     IconButton(
                       onPressed: () =>
                           chatController.sendMessage(widget.receiverId),
                       icon: const Icon(Icons.send),
                     ),
-
                     IconButton(
                       onPressed: () {
                         setState(() {
@@ -137,17 +123,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   ],
                 ),
               ),
-
               Offstage(
                 offstage: !chatController.emojiShowing,
                 child: SizedBox(
                   height: 250,
                   child: EmojiPicker(
-
                     onEmojiSelected: (category, emoji) {
                       chatController.onEmojiSelected(emoji);
                     },
-
                     onBackspacePressed: chatController.onBackspacePressed,
                   ),
                 ),

@@ -73,16 +73,13 @@ class MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     bool isCurrentUser = data['senderId'] == authService.getCurrentUser()!.uid;
 
- 
     String formattedTimestamp = _formatTimestamp(data['timestamp']);
 
     bool showDateHeader = previousTimestamp == null ||
         !_isSameDay(data['timestamp'], previousTimestamp!);
-
 
     return Column(
       crossAxisAlignment:
@@ -97,15 +94,14 @@ class MessageItem extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               decoration: ShapeDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15))),
+                  color: Theme.of(context).colorScheme.primary,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15))),
               child: Column(
                 crossAxisAlignment: isCurrentUser
                     ? CrossAxisAlignment.end
                     : CrossAxisAlignment.start,
                 children: [
-
                   FutureBuilder<UserModel>(
                     future: chatRepository.getUserById(data['senderId']),
                     builder: (context, snapshot) {
@@ -116,7 +112,9 @@ class MessageItem extends StatelessWidget {
                       } else {
                         return Text(
                           snapshot.data!.nickname ?? 'Unknown',
-                          style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.onPrimary),
                         );
                       }
                     },
@@ -124,12 +122,16 @@ class MessageItem extends StatelessWidget {
                   const SizedBox(height: 5),
                   Text(
                     data["message"],
-                    style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onPrimary),
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                   const SizedBox(height: 5),
                   Text(
                     formattedTimestamp,
-                    style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ],
               ),
